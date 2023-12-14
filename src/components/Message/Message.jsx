@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
+import React, { useEffect, useRef, useState } from 'react'
 import './Message.css'
 import { useInfoContext } from '../../context/Context'
 import Loader from '../Loader/Loader'
@@ -7,119 +6,90 @@ import { addMessage, getMessage } from '../../api/messageRequests'
 import {UilServer} from '@iconscout/react-unicons'
 import Profile from '../../img/defauld_img.jpg'
 import { getUser } from '../../api/userRequests'
-import { userChats } from '../../api/chatRequests'
+import InputEmoji  from 'react-input-emoji'
+import {format}  from 'timeago.js'
 const serverURL = process.env.REACT_APP_SERVER_URL
 
 
 const Message = () => {
-    const {currentUser, userId} = useInfoContext()
-    const [user, setUser] = useState()
-    const [reload, setReload] = useState(false)
-    const [chatId, setChatId] = useState()
-    const [chats, setChats] = useState([])
-    const [getUserMessage, setGetUserMessage] = useState([])
-    let id = ""
-    useEffect(()=>{
-        if(userId){
-            const getOneUser = async () => {
-                try {
-                    const res = await getUser(userId)
-                    setUser(res?.data.user)
-                } catch (error) {
-                    toast.dismiss()
-                    toast.error(error.response.data.message)
-                }
-            };  
-            getOneUser()
-        }
-        const getChats = async () => {
-            try {
-                const res = await userChats()
-                setChats(res?.data.chats);
-            } catch (error) {
-                toast.dismiss()
-                toast.error(error?.response.data.message)
-            }
-        }
-        getChats()
-        const getMess = async (id) => {
-            setChatId(id)
-            try {
-                const res = await getMessage(id)
-                setGetUserMessage(res?.data.messages);
-            } catch (error) {
-                toast.dismiss()
-                toast.error(error?.response?.data.message)
-            }
-        }
-        
-        const newData = chats?.map(item => {
-            return {
-                id: item._id,
-                setId: item.members.slice(',')[1],
-            };
-        })
-    
-        const result = newData.filter(data => data.setId === userId)[0]
-        if(result){
-            getMess(result.id)
-        } 
-    },[userId, reload])
-   
-    const sendMessage = async (e) => {
-        e.preventDefault()
-        if(chatId){
-            try {
-                const data = new FormData(e.target)
-                data.append('chatId', chatId)
-                data.append('senderId', userId)
-                const res = await addMessage(data)
-                setReload(!reload)
-                toast.dismiss()
-                toast.success(res?.data.message)
+    const {onlineUsers, currentChat, currentUser, exit,} = useInfoContext()
+    const [userData, setUserData] = useState(null)
+    const [messages, setMessages] = useState([])
 
+
+    const imgRef = useRef()
+
+    const userId = currentChat?.members?.find(id => id !== currentUser._id)
+
+    useEffect(()=>{
+        const getUsers = async () => {
+            try {
+                const res = await getUser(userId)
+                setUserData(res.data.user);
             } catch (error) {
-                toast.dismiss()
-                toast.error(error?.response?.data.message)
+                if(error.response.data.message === 'jwt exprired'){
+                    exit()
+                }
             }
         }
+        if(currentChat){
+            getUsers()
+        }
+    },[userId])
+
+    useEffect(()=>{
+        const fetchMessage = async () => {
+            try {
+                const {data} = await getMessage(currentUser._id)
+                setMessages(data.messages)
+            } catch (error) {
+                if(error.response.data.message === 'jwt exprired'){
+                    exit()
+                }
+            }
+        }
+        if(currentChat){
+            fetchMessage()
+        }
+    }, [])
+
+    const online = () => {
+        const onlineUser = onlineUsers.find(user => user.userId === userId)
+        return onlineUser ? true : false
     }
 
-
+   
   return (
     <div className="message-box cssanimation blurIn">
-        {user ? <>
+        {userData ? <div key={userData._id}>
             <div className="profile-box cssanimation blurInBottom">
-                <img  src={user?.profilePicture ? `${serverURL}/${user?.profilePicture}` : Profile} alt="profile_img" className="message-img" />
+                <img  src={userData?.profilePicture ? `${serverURL}/${userData?.profilePicture}` : Profile} alt="profile_img" className="message-img" />
                 <div className='profile-content'>
-                    <b>{user?.firstname} {user?.lastname}</b>
-                    <div className="statestic">online</div>
+                    <b>{userData?.firstname} {userData?.lastname}</b>
+                    <div style={online() ? {color: 'greenyellow'} : {color: 'white'}}>{online() ? 'online' : 'offline'}</div>
                 </div>
                 <div className="profile-set">
                     <UilServer />
                 </div>
             </div>
             <div className="send-message cssanimation blurInTop">
-            {getUserMessage?.length > 0 ? getUserMessage.map(chat => {
-                const data = new Date(chat.createdAt).toLocaleTimeString().slice(0, 5)
-                return(<>
-                    <div key={chat._id} className="messages">
-                        <p>{user?.isRead ? <></> : <></>}</p>
+            {messages?.length > 0 ? messages.map(chat => {
+                return(<div key={chat._id}>
+                    <div className="messages">
                         <b>{chat.text} </b>
                     </div>
-                    <span className='message-time'>{data}</span>
-                </>)}) : <h3 style={{position: "relative", top: '200px',}}>Hali yozishmalar mavjud emas!</h3>}
+                    <span className='message-time'>{format(chat.createdAt)}</span>
+                </div>)}) : <h3 style={{position: "relative", top: '200px',}}>Hali yozishmalar mavjud emas!</h3>}
             </div>
             <div className="send-input-box">
-                    <form onSubmit={sendMessage} action=''>
-                        <span className="hiddenFileInput file-icon">
-                            <input type="file" name="image"/>
-                        </span>
-                        <input type="text" name='text' className="search-input" placeholder='Message'/>
-                        <button className='message-btn'>Send</button>
-                    </form>
+                <div className="sender-file-btn">
+                    <button className='send-file-btn'>file</button>
+                    <InputEmoji/>
+                    <button className='message-btn'>Send</button>
+                    <input ref={imgRef} type="file" name="image" className='message-file-input'/>
+                </div>
             </div>
-        </> : <Loader/>}
+        </div> : <Loader/>}
     </div>
   )
 }

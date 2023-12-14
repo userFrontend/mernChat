@@ -4,7 +4,7 @@
     align-items: center;
     justify-content: space-between;
     height: 96vh;
-    width: 400px;
+    width: 100%;
     background-color: #fff;
     box-shadow: var(--profileShadow);
     border-radius: 10px;
@@ -28,7 +28,7 @@
     bottom: 0;
     left: 0;
     padding: 10px;
-    width: 400px;
+    width: 100%;
 }
 
 .send-input-box input {
@@ -76,9 +76,6 @@
 
 .message-btn{
     cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 10px;
     background: var(--buttonBg);
     border-radius: 8px;
     color: white;
@@ -92,10 +89,6 @@
     border-radius: 50%;
     border: 2px solid white;
     cursor: pointer;
-}
-
-.statestic{
-    color: greenyellow;
 }
 
 .send-message{
@@ -120,5 +113,13 @@
     font-weight: bold;
     font-size: 12px;
 }
-.messages b {
+
+.sender-file-btn{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.message-file-input{
+    display: none;
 }

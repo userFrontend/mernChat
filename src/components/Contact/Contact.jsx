@@ -1,60 +1,46 @@
 import React, { useEffect, useState } from 'react'
-import Logo from '../../img/logo.png'
-import { getAllUsers } from '../../api/userRequests'
-import { toast } from 'react-toastify'
-import {UilSearch} from '@iconscout/react-unicons'
+import { getUser } from '../../api/userRequests'
 import './Contact.css'
-import Users from '../Users/Users'
-import Loader from '../Loader/Loader'
-import { userChats } from '../../api/chatRequests'
 import { useInfoContext } from '../../context/Context'
+import Profile from '../../img/defauld_img.jpg'
+const serverURL = process.env.REACT_APP_SERVER_URL
 
-const Contact = () => {
-    const {exit} = useInfoContext()
-    const [users, setUsers] = useState([]);
-    const [chats, setChats] = useState([]);
-    const [loading, setLoading] = useState(false);
+const Contact = ({chat}) => {
+    const {exit, currentUser, setUserId, onlineUsers} = useInfoContext()
+    const [user, setUserData] = useState(null);
+
+    const userId = chat?.members.find(id => id !== currentUser._id)
+
+    const online = () => {
+        const onlineUser = onlineUsers.find(user => user.userId === userId)
+        return onlineUser ? true : false
+    }
 
     useEffect(()=>{
         const getUsers = async () => {
             try {
-                const res = await getAllUsers()
-                setUsers(res.data.users);
+                const res = await getUser(userId)
+                setUserData(res.data.user);
             } catch (error) {
-                toast.dismiss()
-                toast.error(error?.response.data.message)
+                if(error.response.data.message === 'jwt exprired'){
+                    exit()
+                }
             }
         }
         getUsers()
-        const getChats = async () => {
-            try {
-                const res = await userChats()
-                setChats(res?.data.chats);
-            } catch (error) {
-                toast.dismiss()
-                toast.error(error?.response.data.message)
-            }
-        }
-        getChats()
-    },[loading])
+    },[userId])
 
-
-    const newData = chats?.map(item => {
-        return item.members.slice(',')[1];
-    })
 
 
   return (
-    <div className='contact-users'>
-        <h1>Contact</h1>
-        <button onClick={exit}>Exit</button>
-        {newData.length > 0 ? newData.map(data => {
-            const res = users.filter(user => user._id === data)
-            return (<>
-                <Users key={data} users={res}/>
-            </>)
-        }) : <Loader/>}
-    </div>
+            <li key={user?._id} className="member co-funder">
+                <div className="thumb">
+                    <img src={user?.profilePicture ? `${serverURL}/${user?.profilePicture}` : Profile} alt="profile_img" className="profile-img" />
+                    </div>
+                <div className="description">
+                    <h3>{user?.firstname} {user?.lastname} <div style={online() ? {backgroundColor: 'greenyellow'} : {backgroundColor: 'gray'}} className='status'></div></h3>
+                </div>
+            </li>
   )
 }
 

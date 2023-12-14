@@ -15,10 +15,10 @@ const Search = () => {
         const getUsers = async () => {
             try {
                 const res = await getAllUsers()
-                setUsers(res.data.users);
+                setUsers(res?.data.users);
             } catch (error) {
                 toast.dismiss()
-                toast.error(error?.response.data.message)
+                toast.error(error?.response?.data.message)
             }
         }
         getUsers()
@@ -26,12 +26,13 @@ const Search = () => {
 
     const searchUser = (e) => {
         e.preventDefault()
+        const text = e.target.value.toLowerCase()
         if(e.target.value){
             const result = users.filter(({ firstname, lastname }) => {
                     const testString = `${firstname}${lastname}`.toLowerCase();
                     let authorName = firstname.toLowerCase();
                     let bookTitle = lastname.toLowerCase();
-                    return testString.includes(e.target.value) && (authorName.startsWith(e.target.value) || bookTitle.startsWith(e.target.value));
+                    return testString.includes(text) && (authorName.startsWith(text) || bookTitle.startsWith(text));
             })
           setUsers(result);
         }else{

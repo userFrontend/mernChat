@@ -19,13 +19,6 @@
   box-sizing: border-box;
 }
 
-body *,
-body *:before,
-body *:after {
-	box-sizing: border-box;
-}
-
-
 .blur {
   position: absolute;
   max-width: 350px;
@@ -49,13 +42,10 @@ body *:after {
   display: none;
 }
 
-.status{
-  position: relative;
-  bottom: -70px;
-  left: 30px;
+.status, .status-dis{
   height: 20px;
   width: 20px;
+  margin-left: 8px;
   border-radius: 50%;
   border: 2px solid white;
-  background-color: greenyellow;
 }

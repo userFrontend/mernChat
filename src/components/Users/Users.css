@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400&display=swap");
 
 .content {  
-    width: 100%;
+    /* width: 100%; */
 }
 
 h2 {
@@ -14,7 +14,7 @@ h2 {
 }
 
 .member {
-    width: 400px;
+	width: 100%;
     border-radius: 10px;
     margin: 1.5em 0 0.5em;
 	padding: 0.73em;
@@ -44,12 +44,12 @@ h2 {
 	transform: rotate(-4deg);
 	transition: var(--trans);
     border-radius: 10px;
-    overflow: hidden;
+    /* overflow: hidden; */
 	margin-left: -3em;
 	padding: 0.5em;
 }
 
-.member:nth-of-type(even) .thumb, .member:nth-of-type(even) .status{
+.member:nth-of-type(even) .thumb{
 	--deg: 86deg;
 	float: right;
 	margin-left: 3.5em;
@@ -60,6 +60,7 @@ h2 {
 .thumb img {
 	width: 100%;
 	height: 100%;
+    object-fit: cover;
     border-radius: 10px;
     filter: grayscale(1);
 	background: var(--dark);
@@ -68,7 +69,7 @@ h2 {
 .member:hover {
 	transform: scale(0.9);
 	transition: var(--trans);
-	filter: drop-shadow(0px 10px 5px #0008);
+	/* filter: drop-shadow(0px 10px 5px #0008); */
 }
 
 .member:hover .thumb {
@@ -99,7 +100,7 @@ h2 {
 
 h3 {
 	background: linear-gradient(182deg, #fff0 60%, whitesmoke 0 100%);
-	display: inline;
+	display: flex;
 	transform: rotate(-2deg);
 	position: absolute;
 	margin: 0;
@@ -133,10 +134,10 @@ h3 {
 	content: "CHAT MESSAGE";
 	font-size: 0.75em;
 	position: absolute;
-	top: -16px;
+	bottom: -10px;
 	background: white;
     border: 1px solid dodgerblue;
-	right: 10px;
+	right: -10px;
 	transform: rotate(3deg);
 	padding: 0.35em 0.75em 0.5em;
     border-radius: 10px;
@@ -146,7 +147,7 @@ h3 {
 
 .co-funder:nth-of-type(even):after {
 	right: inherit;
-	left: 10px;
+	left: -10px;
 	transform: rotate(-3deg);
 }
 
