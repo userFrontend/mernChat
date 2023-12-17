@@ -60,6 +60,7 @@ const Chat = () => {
               </div>
                 )
               }) : <><h2>Yozishmalar mavjudmas</h2> <br /> <Loader/></>}
+              
           </ul>
         </div>
           </div>  
