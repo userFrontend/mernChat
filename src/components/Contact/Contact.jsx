@@ -57,7 +57,7 @@ const Contact = ({chat}) => {
                 <div className="description">
                     <h3>{user?.firstname} {user?.lastname} <div style={online() ? {backgroundColor: 'greenyellow'} : {backgroundColor: 'gray'}} className='status'></div></h3>
                 </div>
-                <i onClick={deleteChatUser}  className="fa-solid fa-ellipsis-vertical"></i>
+                <i onClick={deleteChatUser}  className="fa-solid fa-ellipsis-vertical del"></i>
             </li>
   )
 }

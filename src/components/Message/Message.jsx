@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import './Message.css'
 import { useInfoContext } from '../../context/Context'
 import Loader from '../Loader/Loader'
-import { addMessage, getMessage } from '../../api/messageRequests'
+import { addMessage, deleteMessage, getMessage } from '../../api/messageRequests'
 import {UilServer} from '@iconscout/react-unicons'
 import Profile from '../../img/defauld_img.jpg'
 import { getUser } from '../../api/userRequests'
 import InputEmoji  from 'react-input-emoji'
 import {format}  from 'timeago.js'
+import { toast } from 'react-toastify'
 const serverURL = process.env.REACT_APP_SERVER_URL
 
 
@@ -57,6 +58,18 @@ const Message = () => {
         return onlineUser ? true : false
     }
 
+    const deleteOneMessage = async (id) => {
+        try {
+            const res = await deleteMessage(id);
+            toast.dismiss()
+            toast.success(res?.data.message)
+        } catch (error) {
+            if(error.response.data.message === 'jwt exprired'){
+                exit()
+            }
+        }
+    }
+
    
   return (
     <div className="message-box cssanimation blurIn">
@@ -77,6 +90,7 @@ const Message = () => {
                     <div>
                         <b>{chat.text} </b>
                         <span className='message-time'>{format(chat.createdAt)}</span>
+                        <i onClick={() => deleteOneMessage(chat._id)}  className="fa-solid fa-ellipsis-vertical del"></i>
                     </div>
                 </div>)}) : <h3 style={{position: "relative", top: '200px',}}>Hali yozishmalar mavjud emas!</h3>}
             </div>
