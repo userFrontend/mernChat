@@ -1,45 +1,42 @@
 .message-box{
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     height: 96vh;
-    width: 100%;
     background-color: #fff;
     box-shadow: var(--profileShadow);
     border-radius: 10px;
+    display: flex;
+    align-items: start;
+    justify-content: center
+}
+
+.message-list{
+    width: 100%;
+    height: 100%;
+    justify-content: end;
+    justify-content: space-between;
+    flex-direction: column;
 }
 
 .profile-box{
-    position: absolute;
-    top: 0;
-    left: 0;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
+    /* width: 400px; */
     background: var(--buttonBg);
     border-radius: 10px 10px 0 0;
     padding: 20px;
 }
 
 .send-input-box{
-    position: absolute;
-    bottom: 0;
-    left: 0;
     padding: 10px;
     width: 100%;
 }
 
-.send-input-box input {
-    width: 100%;
-    padding: 15px 50px;
-}
 
 
 
 .profile-content{
-    padding: 0 50px;
+    padding: 0 50px; 
 }
 
 .profile-set{
@@ -66,26 +63,31 @@
 }
 
 .send-message{
-    margin-top: 90px;
-    height: 555px;
-    padding: 20px;
     overflow-y: auto;
-    margin-bottom: 40px;
+    display: flex;
+    height: 77%;
+    padding: 10px;
+    flex-direction: column;
+    gap: 5px;
 }
 .messages {
-    /* position: relative; */
-    margin-left: 250px;
-    border-radius: 10px;
-    background-color: greenyellow;
+    width: 50%;
+    border-radius: 10px 10px 10px 0;
+    background-color: rgba(128, 128, 128, 0.523);
     padding: 5px 15px;
     text-align: center;
 }
 
+.own {
+    background-color: greenyellow;
+    border-radius: 10px 10px 0 10px;
+    margin-left: auto;
+}
+
 .message-time {
-    margin-left: 340px;
-    margin-bottom: 10px;
     font-weight: bold;
     font-size: 12px;
+    color: white;
 }
 
 .sender-file-btn{

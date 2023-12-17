@@ -49,3 +49,7 @@
   border-radius: 50%;
   border: 2px solid white;
 }
+
+input::placeholder{
+  color: rgba(128, 128, 128, 0.427);
+}

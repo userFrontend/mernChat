@@ -12,10 +12,9 @@ const serverURL = process.env.REACT_APP_SERVER_URL
 
 
 const Message = () => {
-    const {onlineUsers, currentChat, currentUser, exit,} = useInfoContext()
+    const {onlineUsers, currentChat, setModal, modal, setUserModal, currentUser, exit,} = useInfoContext()
     const [userData, setUserData] = useState(null)
     const [messages, setMessages] = useState([])
-
 
     const imgRef = useRef()
 
@@ -40,7 +39,7 @@ const Message = () => {
     useEffect(()=>{
         const fetchMessage = async () => {
             try {
-                const {data} = await getMessage(currentUser._id)
+                const {data} = await getMessage(currentChat._id)
                 setMessages(data.messages)
             } catch (error) {
                 if(error.response.data.message === 'jwt exprired'){
@@ -51,7 +50,7 @@ const Message = () => {
         if(currentChat){
             fetchMessage()
         }
-    }, [])
+    }, [currentChat])
 
     const online = () => {
         const onlineUser = onlineUsers.find(user => user.userId === userId)
@@ -61,9 +60,9 @@ const Message = () => {
    
   return (
     <div className="message-box cssanimation blurIn">
-        {userData ? <div key={userData._id}>
+        {userData ? <div className="message-list" key={userData._id}>
             <div className="profile-box cssanimation blurInBottom">
-                <img  src={userData?.profilePicture ? `${serverURL}/${userData?.profilePicture}` : Profile} alt="profile_img" className="message-img" />
+                <img onClick={() => {setModal(!modal); setUserModal(userData) }}  src={userData?.profilePicture ? `${serverURL}/${userData?.profilePicture}` : Profile} alt="profile_img" className="message-img" />
                 <div className='profile-content'>
                     <b>{userData?.firstname} {userData?.lastname}</b>
                     <div style={online() ? {color: 'greenyellow'} : {color: 'white'}}>{online() ? 'online' : 'offline'}</div>
@@ -74,11 +73,11 @@ const Message = () => {
             </div>
             <div className="send-message cssanimation blurInTop">
             {messages?.length > 0 ? messages.map(chat => {
-                return(<div key={chat._id}>
-                    <div className="messages">
+                return(<div key={chat._id} className={chat.senderId === currentUser._id ? "messages own" : "messages"}>
+                    <div>
                         <b>{chat.text} </b>
+                        <span className='message-time'>{format(chat.createdAt)}</span>
                     </div>
-                    <span className='message-time'>{format(chat.createdAt)}</span>
                 </div>)}) : <h3 style={{position: "relative", top: '200px',}}>Hali yozishmalar mavjud emas!</h3>}
             </div>
             <div className="send-input-box">

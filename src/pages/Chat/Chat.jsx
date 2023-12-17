@@ -8,10 +8,12 @@ import Contact from '../../components/Contact/Contact'
 import Message from '../../components/Message/Message'
 import { io } from 'socket.io-client'
 import Loader from '../../components/Loader/Loader'
+import Modal from '../../components/Modal/Modal'
 
 const Chat = () => {
-  const {chats, exit, setChats, currentUser, setCurrentChat, setOnlineUsers} = useInfoContext()
+  const {chats, exit, setChats, currentUser, setUserModal, modal, setModal, setCurrentChat, setOnlineUsers} = useInfoContext()
   const socket = io("http://localhost:4001")
+
 
   useEffect(()=>{
     const getchats = async () => {
@@ -45,11 +47,11 @@ const Chat = () => {
         <div className="contact-users">
         <div className='content'>
           <div className="setting">
-            <button>Setting</button>
+            <button onClick={() => {setModal(!modal); setUserModal(currentUser) }}><i className="fa-solid fa-gear"></i></button>
             <button onClick={() => {
               exit()
               socket.emit('exit', currentUser._id)
-            }}>Exit</button>
+            }}><i className="fa-solid fa-arrow-right-from-bracket"></i></button>
           </div>
           <ul className="team">
             {chats.length > 0 ? chats.map(chat => {
@@ -62,7 +64,7 @@ const Chat = () => {
         </div>
           </div>  
       </div>
-      
+      {modal && <Modal />}
       </div>
   )
 }

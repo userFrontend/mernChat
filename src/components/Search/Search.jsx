@@ -9,20 +9,21 @@ import Loader from '../Loader/Loader'
 
 const Search = () => {
     const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [datUser, setDatUser] = useState([]);
 
     useEffect(()=>{
         const getUsers = async () => {
             try {
                 const res = await getAllUsers()
                 setUsers(res?.data.users);
+                setDatUser(res?.data.users)
             } catch (error) {
                 toast.dismiss()
                 toast.error(error?.response?.data.message)
             }
         }
         getUsers()
-    },[loading])
+    },[])
 
     const searchUser = (e) => {
         e.preventDefault()
@@ -34,9 +35,9 @@ const Search = () => {
                     let bookTitle = lastname.toLowerCase();
                     return testString.includes(text) && (authorName.startsWith(text) || bookTitle.startsWith(text));
             })
-          setUsers(result);
+            setDatUser(result)
         }else{
-            setLoading(!loading)
+            setDatUser(users)
         }
     }
 
@@ -50,8 +51,8 @@ const Search = () => {
                 </div>
             </div>
         { users?.length > 0 ? <>
-            {users.length > 0 ? <>
-                <Users key={users} users={users}/>
+            {datUser?.length > 0 ? <>
+                <Users key={users} users={datUser}/>
             </> : <h2>Ma'lumot topilmadi !</h2>}
     </>  : <Loader/>}
     </div>

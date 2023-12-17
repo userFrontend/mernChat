@@ -3,6 +3,8 @@ import { getUser } from '../../api/userRequests'
 import './Contact.css'
 import { useInfoContext } from '../../context/Context'
 import Profile from '../../img/defauld_img.jpg'
+import { deleteChat } from '../../api/chatRequests'
+import { toast } from 'react-toastify'
 const serverURL = process.env.REACT_APP_SERVER_URL
 
 const Contact = ({chat}) => {
@@ -30,6 +32,21 @@ const Contact = ({chat}) => {
         getUsers()
     },[userId])
 
+    const deleteChatUser = async () => {
+        const confirim = window.confirm("tasdiqlash")
+        if(confirim){
+                try {
+                const res = await deleteChat(chat._id)
+                toast.dismiss()
+                toast.success(res?.data.message)
+            } catch (error) {
+                if(error.response.data.message === 'jwt exprired'){
+                    exit()
+                }
+            }
+        }
+    }
+
 
 
   return (
@@ -40,6 +57,7 @@ const Contact = ({chat}) => {
                 <div className="description">
                     <h3>{user?.firstname} {user?.lastname} <div style={online() ? {backgroundColor: 'greenyellow'} : {backgroundColor: 'gray'}} className='status'></div></h3>
                 </div>
+                <i onClick={deleteChatUser}  className="fa-solid fa-ellipsis-vertical"></i>
             </li>
   )
 }

@@ -9,6 +9,8 @@ export const InfoProvider = ({children}) => {
     const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem('profile')) || null)
     const [onlineUsers, setOnlineUsers] = useState([])
     const [currentChat, setCurrentChat] = useState(null)
+    const [userModal, setUserModal] = useState(null)
+    const [modal, setModal] = useState(false);
     const [chats, setChats] = useState([])
 
     const exit = () => {
@@ -19,7 +21,8 @@ export const InfoProvider = ({children}) => {
     const value  = {
         currentUser, setCurrentUser,
         exit, onlineUsers, setOnlineUsers,
-        currentChat, setCurrentChat, chats, setChats
+        currentChat, setCurrentChat, chats, setChats,
+        userModal, setUserModal, modal, setModal,
     }
 
     return (

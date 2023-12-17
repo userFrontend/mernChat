@@ -1,0 +1,96 @@
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    position: relative;
+    z-index: 2;
+    border-radius: 10px;
+    background-color: #fefefe;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 70%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.modal-content img {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border: 2px solid black;
+}
+
+.input-profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.input-profile .input {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 0 2px gray;
+    margin-bottom: 10px;
+}
+
+.input-profile .input-dis {
+    border: none;
+    background: transparent;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+.open-profile button {
+    border: none;
+    padding: 5px 10px;
+    border-radius: 10px;
+    color: dodgerblue;
+}
+
+.file-modal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.file-modal label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    gap: 5px;
+}
+
+.file-modal input {
+    display: none;
+}
+
+.close {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+}
