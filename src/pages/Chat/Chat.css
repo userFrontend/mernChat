@@ -1,9 +1,21 @@
 .chat-page{
     max-width: 1400px;
     margin: 0 auto;
-    display: grid;
+    /* display: grid; */
+    padding: 10px 0;
     gap: 20px;
-    padding: 10px 20px;
+}
+.navigation{
+    position: fixed;
+    right: 0;
+    z-index: 9999;
+    display: none;
+}
+
+.navigation button {
+    border: none;
+    background: transparent;
+    margin: 10px;
 }
 
 .chat{
@@ -17,8 +29,7 @@
 }
 
 .middle-sid{
-    background-image: url();
-    width: 100%;
+    width: 1000px;
 }
 
 .right-side{
@@ -28,13 +39,34 @@
 .setting{
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     gap: 10px;
 }
 
-@media (min-width: 600px) {
+.setting button {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+}
+
+.setting button:hover{
+    color: dodgerblue;
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .navigation{display: block;}
     .chat-page { grid-template-columns: repeat(2, 1fr); }
-  }
-@media (min-width: 900px) {
+    .left-side{display: none; position: absolute; top: 10px; left: 0;}
+    .middle-sid{display: none; position: absolute; top: 10px; left: 0;}
+    .right-side{display: none; position: absolute; top: 10px; left: 0;}
+    .setting{justify-content: start;}
+}
+@media (max-width: 900px) {
+    .navigation{ display: block;}
     .chat-page { grid-template-columns: repeat(3, 1fr); }
+    .left-side{display: none; position: absolute; top: 10px; left: 0;}
+    .middle-sid{display: none; position: absolute; top: 10px; left: 0;}
+    .right-side{display: none; position: absolute; top: 10px; left: 0;}
+    .setting{justify-content: start;}
   }

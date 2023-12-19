@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 const serverURL = process.env.REACT_APP_SERVER_URL
 
 const Contact = ({chat}) => {
-    const {exit, currentUser, setUserId, onlineUsers} = useInfoContext()
+    const {exit, currentUser, currentChat, onlineUsers} = useInfoContext()
     const [user, setUserData] = useState(null);
 
     const userId = chat?.members.find(id => id !== currentUser._id)
@@ -55,9 +55,9 @@ const Contact = ({chat}) => {
                     <img src={user?.profilePicture ? `${serverURL}/${user?.profilePicture}` : Profile} alt="profile_img" className="profile-img" />
                     </div>
                 <div className="description">
-                    <h3>{user?.firstname} {user?.lastname} <div style={online() ? {backgroundColor: 'greenyellow'} : {backgroundColor: 'gray'}} className='status'></div></h3>
+                    <h3>{user?.firstname} {user?.lastname} <div style={online() ? {backgroundColor: 'greenyellow'} : {backgroundColor: 'gray'}} className='status'></div><i onClick={deleteChatUser}  className="fa-solid fa-ellipsis-vertical del"></i></h3>
                 </div>
-                <i onClick={deleteChatUser}  className="fa-solid fa-ellipsis-vertical del"></i>
+                
             </li>
   )
 }

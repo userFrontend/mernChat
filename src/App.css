@@ -45,7 +45,7 @@
 .status, .status-dis{
   height: 20px;
   width: 20px;
-  margin-left: 8px;
+  margin-left: auto;
   border-radius: 50%;
   border: 2px solid white;
 }
@@ -56,5 +56,5 @@ input::placeholder{
 
 .del {
   cursor: pointer;
-  color: red;
+  color: darkgoldenrod;
 }

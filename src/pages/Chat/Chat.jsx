@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Chat.css'
 import { useInfoContext } from '../../context/Context'
 import { toast } from 'react-toastify'
@@ -11,8 +11,11 @@ import Loader from '../../components/Loader/Loader'
 import Modal from '../../components/Modal/Modal'
 
 const Chat = () => {
-  const {chats, exit, setChats, currentUser, setUserModal, modal, setModal, setCurrentChat, setOnlineUsers} = useInfoContext()
+  const {chats, exit, setChats, currentUser, setUserModal, modal, setModal, setCurrentChat, setOnlineUsers, page, setPage} = useInfoContext()
   const socket = io("http://localhost:4001")
+
+  const [sendMessage, setSendMessage] = useState(null)
+  const [asnwerMessage, setAnswerMessage] = useState(null)
 
 
   useEffect(()=>{
@@ -34,16 +37,35 @@ const Chat = () => {
       setOnlineUsers(users)
     })
   },[currentUser._id])
+
+  useEffect(() => {
+    if(sendMessage !== null){
+      socket.emit('send-message', sendMessage)
+    }
+  }, [sendMessage])
+
+  useEffect(() => {
+    if(sendMessage !== null){
+      socket.on('aswer-message', (data) => {
+        setAnswerMessage(data)
+      })
+    }
+  }, [sendMessage])
+  
   
   return (
     <div className='chat-page'>
-      <div className="left-side cssanimation blurInRight">
+      <div className="navigation">
+        <button onClick={() => setPage(1)}><i className="fa-solid fa-address-book"> </i> contact</button>
+        <button onClick={() => setPage(0)}><i className="fa-solid fa-comments"></i> Messages</button>
+      </div>
+      <div style={page === 1 ? {display: 'block'} : {}} className="left-side cssanimation blurInRight">
         <Search />
       </div>
-      <div className="middle-side">
-        <Message/>
+      <div  style={page === 2 ? {display: 'block'} : {display: 'none'}} className="middle-side">
+        <Message asnwerMessage={asnwerMessage} setSendMessage={setSendMessage}/>
       </div>
-      <div className="right-side cssanimation blurInLeft">
+      <div style={page === 0 ? {display: 'block'} : {}} className="right-side cssanimation blurInLeft">
         <div className="contact-users">
         <div className='content'>
           <div className="setting">
@@ -55,7 +77,7 @@ const Chat = () => {
           </div>
           <ul className="team">
             {chats.length > 0 ? chats.map(chat => {
-              return (<div onClick={() => setCurrentChat(chat)} key={chat._id}>
+              return (<div onClick={() => {setCurrentChat(chat); setPage(2)}} key={chat._id}>
                 <Contact chat={chat}/>
               </div>
                 )

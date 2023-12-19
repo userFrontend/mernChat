@@ -1,0 +1,12 @@
+.delete-modal {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+
+.delete-modal button{
+    border: none;
+    padding: 5px;
+    border-radius: 10px;
+}

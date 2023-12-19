@@ -9,17 +9,35 @@ import { getUser } from '../../api/userRequests'
 import InputEmoji  from 'react-input-emoji'
 import {format}  from 'timeago.js'
 import { toast } from 'react-toastify'
+import DeleteModal from '../Modal/DelModal'
 const serverURL = process.env.REACT_APP_SERVER_URL
 
 
-const Message = () => {
-    const {onlineUsers, currentChat, setModal, modal, setUserModal, currentUser, exit,} = useInfoContext()
+const Message = ({asnwerMessage, setSendMessage}) => {
+    const {onlineUsers, currentChat, setModal, modal, setUserModal, currentUser, exit, showModal, setShowModal} = useInfoContext()
     const [userData, setUserData] = useState(null)
     const [messages, setMessages] = useState([])
+    const [isOpen, setIsOpen] = useState(false);
+    const [dropdownId, setDropdownId] = useState();
+    const [messageId, setMessageId] = useState();
+
+    const [textMessage, setTextMessage] = useState('')
+
+    const toggleDropdown = () => {
+      setIsOpen(!isOpen);
+    };
+  
 
     const imgRef = useRef()
+    const scroll = useRef()
+
+
+    useEffect(() => {
+        scroll.current?.scrollIntoView({behavior: "smooth"})
+    }, [messages])
 
     const userId = currentChat?.members?.find(id => id !== currentUser._id)
+
 
     useEffect(()=>{
         const getUsers = async () => {
@@ -53,22 +71,73 @@ const Message = () => {
         }
     }, [currentChat])
 
+    useEffect(() => {
+        if(currentChat && asnwerMessage !== null && asnwerMessage.chatId === currentChat._id){
+            setMessages([...messages, asnwerMessage])
+        }
+    }, [asnwerMessage])
+
+
     const online = () => {
         const onlineUser = onlineUsers.find(user => user.userId === userId)
         return onlineUser ? true : false
     }
 
-    const deleteOneMessage = async (id) => {
+    const deleteOneMessage = async () => {
         try {
-            const res = await deleteMessage(id);
+            const res = await deleteMessage(messageId);
             toast.dismiss()
             toast.success(res?.data.message)
+            toggleDropdown()
         } catch (error) {
             if(error.response.data.message === 'jwt exprired'){
                 exit()
             }
         }
     }
+
+    const copyToClipboard = (text) => {
+        const textToCopy = text;
+        const textarea = document.createElement('textarea');
+        textarea.value = textToCopy;
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        toggleDropdown()
+      };
+
+
+      const handleSend = async () => {
+        const message = {
+            senderId: currentUser._id,
+            chatId: currentChat._id,
+            text: textMessage,
+            createdAt: new Date().getTime()
+        }
+
+        
+        if(textMessage === "" ) {
+            return
+        }
+        
+        setSendMessage({...message, receivedId: userId})
+
+        try {
+            const {data} = await addMessage(message);
+            setMessages([...messages, data.messages])
+            setTextMessage('')
+        } catch (error) {
+            if(error.response.data.message === 'jwt exprired'){
+                exit()
+            }
+        }
+      }
+
+      const handleText = (e) => {
+        setTextMessage(e)
+      }
 
    
   return (
@@ -86,23 +155,37 @@ const Message = () => {
             </div>
             <div className="send-message cssanimation blurInTop">
             {messages?.length > 0 ? messages.map(chat => {
-                return(<div key={chat._id} className={chat.senderId === currentUser._id ? "messages own" : "messages"}>
-                    <div>
+                return(<div ref={scroll} key={chat._id} className={chat.senderId === currentUser._id ? "messages own" : "messages"}>
+                    <div className='span-box'>
                         <b>{chat.text} </b>
                         <span className='message-time'>{format(chat.createdAt)}</span>
-                        <i onClick={() => deleteOneMessage(chat._id)}  className="fa-solid fa-ellipsis-vertical del"></i>
+                        <div className="dropdown">
+                        <button className="dropbtn" onClick={() => {toggleDropdown( ); setDropdownId(chat._id)}}>
+                            <i className="fa-solid fa-ellipsis-vertical del"></i>
+                        </button>
+                        {isOpen && dropdownId === chat._id && (
+                            <div className="dropdown-content">
+                            <b onClick={() => {setShowModal(true); setMessageId(chat._id)}}><i className="fa-solid fa-trash-can"></i> Delete</b>
+                            <b><i className="fa-regular fa-pen-to-square"></i>Update</b>
+                            <b onClick={() => copyToClipboard(chat.text)}><i className="fa-regular fa-copy"></i>Copy</b>
+                            </div>
+                        )}
+                        </div>
                     </div>
                 </div>)}) : <h3 style={{position: "relative", top: '200px',}}>Hali yozishmalar mavjud emas!</h3>}
             </div>
             <div className="send-input-box">
-                <div className="sender-file-btn">
-                    <button className='send-file-btn'>file</button>
-                    <InputEmoji/>
-                    <button className='message-btn'>Send</button>
+                <div  className="sender-file-btn">
+                    <button onClick={() => {
+                    imgRef.current.click()
+                    }} className='message-btn'><i className="fa-solid fa-paperclip"></i></button>
+                    <InputEmoji value={textMessage} onChange={handleText}/>
+                    <button onClick={handleSend} className='message-btn'>Send</button>
                     <input ref={imgRef} type="file" name="image" className='message-file-input'/>
                 </div>
             </div>
-        </div> : <Loader/>}
+        </div> : <><Loader/> <h1>Click to send message</h1> </>}
+        {showModal && <DeleteModal onDelete={deleteOneMessage}/>}
     </div>
   )
 }

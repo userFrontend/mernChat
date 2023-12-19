@@ -16,9 +16,10 @@ const Modal = () => {
         try {
             const data = new FormData(e.target);
             const res = await updateUser(userModal._id, data)
+            console.log(res);
+            setUserModal(res?.data.user)
             toast.dismiss()
             toast.success(res?.data.message)
-            setUserModal(res?.data.user)
             localStorage.setItem("profile", JSON.stringify(res?.data.user))
             localStorage.setItem("access_token", res?.data.token)
         } catch (error) {

@@ -5,7 +5,7 @@
     border-radius: 10px;
     display: flex;
     align-items: start;
-    justify-content: center
+    justify-content: center;
 }
 
 .message-list{
@@ -28,7 +28,7 @@
 }
 
 .send-input-box{
-    padding: 10px;
+    /* padding: 10px; */
     width: 100%;
 }
 
@@ -51,7 +51,7 @@
     border-radius: 8px;
     color: white;
     border: none;
-    padding: 15px;
+    padding: 10px;
 }
 .message-img{
     height: 60px;
@@ -68,11 +68,11 @@
     height: 77%;
     padding: 10px;
     flex-direction: column;
-    gap: 5px;
+    gap: 10px;
 }
 .messages {
     width: 50%;
-    border-radius: 10px 10px 10px 0;
+    border-radius: 20px 20px 20px 0;
     background-color: rgba(128, 128, 128, 0.523);
     padding: 5px 15px;
     text-align: center;
@@ -80,15 +80,32 @@
 
 .own {
     background-color: greenyellow;
-    border-radius: 10px 10px 0 10px;
+    border-radius: 20px 20px 0 20px;
     margin-left: auto;
 }
 
+.span-box {
+    position: relative;
+    padding: 0 0 10px 0;
+}
+
 .message-time {
+    position: absolute;
+    background: white;
+    padding: 0 10px;
+    border-radius: 10px;
+    bottom: -10px;
+    right: 0px;
     font-weight: bold;
     font-size: 12px;
-    color: white;
+    color: blue ;
 }
+
+.span-box .dropdown{
+    position: absolute;
+    right: 0;
+}
+
 
 .sender-file-btn{
     display: flex;
@@ -98,4 +115,50 @@
 
 .message-file-input{
     display: none;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background: transparent;
+    color: white;
+    padding: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-content{
+    position: absolute;
+    left: -120px;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-around;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    z-index: 1;
+}
+
+.own .dropdown-content {
+    right: 120px;
+    width: 100%;
+}
+
+
+.dropdown-content b {
+    display: flex;
+    gap: 5px;
+    font-size: 12px;
+    border-radius: 10px;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+}
+
+.dropdown-content b:hover {
+    background: var(--buttonBg);
+    color: white;
 }
