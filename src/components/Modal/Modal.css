@@ -8,7 +8,7 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    z-index: 10000;
+    z-index: 9999;
     background-color: rgba(0, 0, 0, 0.7);
 }
 
@@ -28,8 +28,8 @@
 }
 
 .modal-content img {
-    width: 300px;
-    height: 300px;
+    width: 400px;
+    height: 400px;
     object-fit: cover;
     border: 2px solid black;
 }
@@ -94,4 +94,33 @@
 .close:hover,
 .close:focus {
     color: black;
+}
+
+@media (max-width: 600px) {
+    .modal-content img{
+        width: 200px;
+        height: 200px;
+    }
+    .input-profile .input {
+        padding: 5px;
+        border: none;
+        margin-bottom: 5px;
+    }
+    
+    .input-profile .input-dis {
+        margin-bottom: 5px;
+        padding: 5px;
+    }
+    .input-profile{
+        gap: 10px;
+    }
+
+    .input-profile i {
+        font-size: 12px;
+    }
+
+    .close{
+        top: 5px;
+        right: 10px;
+    }
 }

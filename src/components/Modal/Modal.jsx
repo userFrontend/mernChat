@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 const serverURL = process.env.REACT_APP_SERVER_URL
 
 
-const Modal = () => {
+const Modal = ({toggleImg, setScreenImage}) => {
     const {exit, currentUser, setModal, userModal, setUserModal, modal} = useInfoContext()
 
     const updateUserData = async (e) => {
@@ -34,7 +34,7 @@ const Modal = () => {
         <div className="modal" id="myModal">
         {userModal ?  <div className="modal-content">
             <div className="img-modal">
-                <img width={200} src={userModal?.profilePicture ? `${serverURL}/${userModal?.profilePicture}` : Profile} alt="profile_img" className="profile-img" />
+                <img onClick={() => {toggleImg(); setScreenImage(userModal?.profilePicture)}} width={200} src={userModal?.profilePicture ? `${serverURL}/${userModal?.profilePicture}` : Profile} alt="profile_img" className="profile-img" />
             </div>
             <div className="open-profile">
                 <form id='profile-form' action="#" onSubmit={updateUserData}>

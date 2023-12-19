@@ -7,7 +7,7 @@ import './Search.css'
 import Users from '../Users/Users'
 import Loader from '../Loader/Loader'
 
-const Search = () => {
+const Search = ({setPage}) => {
     const [users, setUsers] = useState([]);
     const [datUser, setDatUser] = useState([]);
 
@@ -52,7 +52,7 @@ const Search = () => {
             </div>
         { users?.length > 0 ? <>
             {datUser?.length > 0 ? <>
-                <Users key={users} users={datUser}/>
+                <Users key={users} users={datUser} setPage={setPage}/>
             </> : <h2>Ma'lumot topilmadi !</h2>}
     </>  : <Loader/>}
     </div>

@@ -13,13 +13,15 @@ import DeleteModal from '../Modal/DelModal'
 const serverURL = process.env.REACT_APP_SERVER_URL
 
 
-const Message = ({asnwerMessage, setSendMessage}) => {
+const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => {
     const {onlineUsers, currentChat, setModal, modal, setUserModal, currentUser, exit, showModal, setShowModal} = useInfoContext()
     const [userData, setUserData] = useState(null)
     const [messages, setMessages] = useState([])
     const [isOpen, setIsOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [dropdownId, setDropdownId] = useState();
     const [messageId, setMessageId] = useState();
+
 
     const [textMessage, setTextMessage] = useState('')
 
@@ -69,7 +71,7 @@ const Message = ({asnwerMessage, setSendMessage}) => {
         if(currentChat){
             fetchMessage()
         }
-    }, [currentChat])
+    }, [currentChat, loading])
 
     useEffect(() => {
         if(currentChat && asnwerMessage !== null && asnwerMessage.chatId === currentChat._id){
@@ -89,6 +91,7 @@ const Message = ({asnwerMessage, setSendMessage}) => {
             toast.dismiss()
             toast.success(res?.data.message)
             toggleDropdown()
+            setLoading(!loading)
         } catch (error) {
             if(error.response.data.message === 'jwt exprired'){
                 exit()
@@ -110,26 +113,30 @@ const Message = ({asnwerMessage, setSendMessage}) => {
 
 
       const handleSend = async () => {
-        const message = {
-            senderId: currentUser._id,
-            chatId: currentChat._id,
-            text: textMessage,
-            createdAt: new Date().getTime()
-        }
+          const les = new FormData()
 
+        les.append('senderId', currentUser._id); 
+        les.append('chatId', currentChat._id); 
+        les.append('text', textMessage); 
+        les.append('createdAt', new Date().getTime());
+
+        if(imgRef.current.value !== null){
+            les.append('image', imgRef?.current.files[0])
+            imgRef.current.value = null
+        }
         
-        if(textMessage === "" ) {
+        if(textMessage === "" && !imgRef.current.value) {
             return
         }
         
-        setSendMessage({...message, receivedId: userId})
+        setSendMessage({...les, receivedId: userId})
 
         try {
-            const {data} = await addMessage(message);
+            const {data} = await addMessage(les);
             setMessages([...messages, data.messages])
             setTextMessage('')
         } catch (error) {
-            if(error.response.data.message === 'jwt exprired'){
+            if(error?.response?.data.message === 'jwt exprired'){
                 exit()
             }
         }
@@ -157,7 +164,9 @@ const Message = ({asnwerMessage, setSendMessage}) => {
             {messages?.length > 0 ? messages.map(chat => {
                 return(<div ref={scroll} key={chat._id} className={chat.senderId === currentUser._id ? "messages own" : "messages"}>
                     <div className='span-box'>
-                        <b>{chat.text} </b>
+                        <b>
+                        {chat.file && <img onClick={() => {toggleImg(); setScreenImage(chat?.file)}} style={{width: '100%'}} src={`${serverURL}/${chat?.file}`} alt='chat_img'/>}    
+                        {chat.text} </b>
                         <span className='message-time'>{format(chat.createdAt)}</span>
                         <div className="dropdown">
                         <button className="dropbtn" onClick={() => {toggleDropdown( ); setDropdownId(chat._id)}}>
@@ -165,9 +174,12 @@ const Message = ({asnwerMessage, setSendMessage}) => {
                         </button>
                         {isOpen && dropdownId === chat._id && (
                             <div className="dropdown-content">
-                            <b onClick={() => {setShowModal(true); setMessageId(chat._id)}}><i className="fa-solid fa-trash-can"></i> Delete</b>
-                            <b><i className="fa-regular fa-pen-to-square"></i>Update</b>
-                            <b onClick={() => copyToClipboard(chat.text)}><i className="fa-regular fa-copy"></i>Copy</b>
+                            {chat.senderId === currentUser._id && <>
+                                <b onClick={() => {setShowModal(true); setMessageId(chat._id)}}><i className="fa-solid fa-trash-can"></i> Delete</b>
+                                <b><i className="fa-regular fa-pen-to-square"></i>Update</b>
+                            </>}
+                            <b onClick={() => copyToClipboard(chat.text)}><i className="fa-regular fa-copy"></i> Copy</b>
+                            <b onClick={() => setIsOpen(!isOpen)}><i className="fa-solid fa-xmark"></i> Close</b>
                             </div>
                         )}
                         </div>
@@ -184,7 +196,7 @@ const Message = ({asnwerMessage, setSendMessage}) => {
                     <input ref={imgRef} type="file" name="image" className='message-file-input'/>
                 </div>
             </div>
-        </div> : <><Loader/> <h1>Click to send message</h1> </>}
+        </div> : <div className='wiat-result'><Loader/> <h1>Click to send message</h1> </div>}
         {showModal && <DeleteModal onDelete={deleteOneMessage}/>}
     </div>
   )

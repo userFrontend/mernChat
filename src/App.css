@@ -57,4 +57,5 @@ input::placeholder{
 .del {
   cursor: pointer;
   color: darkgoldenrod;
+  margin:  0 10px;
 }

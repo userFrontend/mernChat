@@ -9,6 +9,7 @@ import Message from '../../components/Message/Message'
 import { io } from 'socket.io-client'
 import Loader from '../../components/Loader/Loader'
 import Modal from '../../components/Modal/Modal'
+const serverURL = process.env.REACT_APP_SERVER_URL
 
 const Chat = () => {
   const {chats, exit, setChats, currentUser, setUserModal, modal, setModal, setCurrentChat, setOnlineUsers, page, setPage} = useInfoContext()
@@ -16,8 +17,12 @@ const Chat = () => {
 
   const [sendMessage, setSendMessage] = useState(null)
   const [asnwerMessage, setAnswerMessage] = useState(null)
+  const [fullScreen, setFullScreen] = useState(false);
+  const [screenImage, setScreenImage] = useState(null);
+  
+  const toggleImg = () => setFullScreen(!fullScreen);
 
-
+  console.log(fullScreen);
   useEffect(()=>{
     const getchats = async () => {
       try {
@@ -60,10 +65,10 @@ const Chat = () => {
         <button onClick={() => setPage(0)}><i className="fa-solid fa-comments"></i> Messages</button>
       </div>
       <div style={page === 1 ? {display: 'block'} : {}} className="left-side cssanimation blurInRight">
-        <Search />
+        <Search setPage={setPage}/>
       </div>
-      <div  style={page === 2 ? {display: 'block'} : {display: 'none'}} className="middle-side">
-        <Message asnwerMessage={asnwerMessage} setSendMessage={setSendMessage}/>
+      <div  style={page === 2 ? {display: 'block'} : {}} className="middle-side">
+        <Message asnwerMessage={asnwerMessage} setSendMessage={setSendMessage} setScreenImage={setScreenImage} toggleImg={toggleImg}/>
       </div>
       <div style={page === 0 ? {display: 'block'} : {}} className="right-side cssanimation blurInLeft">
         <div className="contact-users">
@@ -86,7 +91,8 @@ const Chat = () => {
         </div>
           </div>  
       </div>
-      {modal && <Modal />}
+      {fullScreen && <img className="full-screen" src={`${serverURL}/${screenImage}`} onClick={toggleImg} />}
+      {modal && <Modal setScreenImage={setScreenImage} toggleImg={toggleImg}/>}
       </div>
   )
 }

@@ -5,7 +5,7 @@ import Profile from '../../img/defauld_img.jpg'
 import { findChat } from '../../api/chatRequests'
 const serverURL = process.env.REACT_APP_SERVER_URL
 
-const Users = ({users}) => {
+const Users = ({users, setPage}) => {
     const {currentUser, setUserModal, setModal, modal, onlineUsers, exit, setCurrentChat, chats, setChats} = useInfoContext()
 
     const online = (id) => {
@@ -38,7 +38,7 @@ const Users = ({users}) => {
                             </div>
                             <div className="description">
                                 <h3>{user.firstname} {user.lastname}  <div style={online(user._id) ? {backgroundColor: 'greenyellow'} : {backgroundColor: 'gray'}} className='status'></div></h3>
-                                <button onClick={() => createChat(user._id, currentUser._id)}>send message</button>
+                                <button onClick={() =>{ createChat(user._id, currentUser._id); setPage(2)}}>send message</button>
                             </div>
                         </li>
                     )
