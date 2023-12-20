@@ -32,12 +32,12 @@ const Modal = ({toggleImg, setScreenImage}) => {
   return (
     <div>
         <div className="modal" id="myModal">
-        {userModal ?  <div className="modal-content">
+        {userModal ?  <div className="modal-content" style={currentUser.coverPicture && {backgroundImage: `url(${serverURL}/${currentUser?.coverPicture})`}}>
             <div className="img-modal">
                 <img onClick={() => {toggleImg(); setScreenImage(userModal?.profilePicture)}} width={200} src={userModal?.profilePicture ? `${serverURL}/${userModal?.profilePicture}` : Profile} alt="profile_img" className="profile-img" />
             </div>
             <div className="open-profile">
-                <form id='profile-form' action="#" onSubmit={updateUserData}>
+                <form action="#" onSubmit={updateUserData}>
                     <div className="input-profile">
                         <i className="fa-solid fa-signature"></i>
                         <input disabled={userModal?._id !== currentUser._id} className={userModal?._id !== currentUser._id ? 'input-dis' : 'input'} type="text" name='firstname' defaultValue={userModal?.firstname} placeholder='Firt Name' required/>
@@ -71,15 +71,15 @@ const Modal = ({toggleImg, setScreenImage}) => {
                         <input disabled={userModal?._id !== currentUser._id} className={userModal?._id !== currentUser._id ? 'input-dis' : 'input'} type="text" name='relationshit' defaultValue={userModal?.relationshit} placeholder='Relationshit' />
                     </div>
                     {userModal?._id === currentUser._id && <div className='file-modal'>
-                        <label htmlFor="profile-form">
+                        <label htmlFor="profile-img">
                             <i className="fa-solid fa-id-card-clip"></i>
                             Profile
-                            <input type="file" name='image'/>
+                            <input type="file" id='profile-img' name='image'/>
                         </label>
-                        <label htmlFor="profile-form">
+                        <label htmlFor="cover-img">
                             <i className="fa-solid fa-image"></i>
                             Cover 
-                            <input type="file" name='coverImage'/>
+                            <input type="file" id='cover-img' name='coverImage'/>
                         </label>
                         <button className="open-chat">Update</button>
                     </div>}

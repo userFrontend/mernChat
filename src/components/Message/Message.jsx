@@ -160,7 +160,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
                     <UilServer />
                 </div>
             </div>
-            <div className="send-message cssanimation blurInTop">
+            <div style={currentUser.coverPicture && {backgroundImage: `url(${serverURL}/${currentUser?.coverPicture})`}} className="send-message cssanimation blurInTop">
             {messages?.length > 0 ? messages.map(chat => {
                 return(<div ref={scroll} key={chat._id} className={chat.senderId === currentUser._id ? "messages own" : "messages"}>
                     <div className='span-box'>

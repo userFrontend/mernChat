@@ -98,7 +98,6 @@ h2 {
 }
 
 h3 {
-	background: linear-gradient(182deg, whitesmoke 60%, whitesmoke 0 100%);
 	display: flex;
 	text-align: center;
 	margin: 0;
@@ -115,10 +114,8 @@ h3 {
 .member:nth-of-type(even) h3 {
 	left: inherit;
 	right: 10px;
-	/* transform: rotate(2deg); */
 	transform-origin: right bottom;
     border: 1px solid dodgerblue;
-	background: linear-gradient(-182deg, whitesmoke 60%, whitesmoke 0 100%);
 }
 
 .member:hover h3 {

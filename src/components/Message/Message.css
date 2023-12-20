@@ -1,5 +1,5 @@
 .message-box{
-    height: 96vh;
+    height: 96.5vh;
     background-color: #fff;
     box-shadow: var(--profileShadow);
     border-radius: 10px;
@@ -37,6 +37,8 @@
     background: var(--buttonBg);
     border-radius: 10px 10px 0 0;
     padding: 20px;
+    border: 1px solid white;
+
 }
 
 .send-input-box{
@@ -82,13 +84,25 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
+    filter: none !important;
     padding: 10px;
     flex-direction: column;
 }
+
+.send-message h3{
+    width: 400px;
+    padding: 20px 30px;
+    
+}
+
+.send-message h3:hover{
+    background: linear-gradient(180deg, whitesmoke 59%, whitesmoke 0 100%);
+}
+
 .messages {
     width: 50%;
     border-radius: 20px 20px 20px 0;
-    background-color: rgba(128, 128, 128, 0.523);
+    background-color: gainsboro;
     padding: 5px 15px;
     text-align: center;
 }
@@ -126,7 +140,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: -20px;
+    margin-top: -15px;
 }
 
 .message-file-input{
@@ -186,21 +200,21 @@
 		filter: none;
 	}
 
+    .send-message {
+        filter: none;
+    }
+
     .own .dropdown-content {
         left: -300px;
     }
 
 	.send-message h3{
 		width: 300px;
-        /* font-size: 15px; */
 	}
    
   }
 @media (min-width: 900px) {
-    .send-message h3{
-		
-	}
 	.send-message {
-        filter: none;
+        filter: none !important;
     }
   }

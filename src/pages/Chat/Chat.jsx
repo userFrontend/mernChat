@@ -22,7 +22,6 @@ const Chat = () => {
   
   const toggleImg = () => setFullScreen(!fullScreen);
 
-  console.log(fullScreen);
   useEffect(()=>{
     const getchats = async () => {
       try {
