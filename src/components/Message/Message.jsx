@@ -98,9 +98,9 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
         }
     }
 
-    const deleteUserChat = async (id) => {
+    const deleteUserChat = async () => {
         try {
-            const res = await deleteChat(id);
+            const res = await deleteChat(currentChat._id);
             setLoading(!loading)
             setPage(0)
         } catch (error) {

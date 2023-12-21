@@ -9,7 +9,7 @@ import Loader from '../Loader/Loader'
 import { useInfoContext } from '../../context/Context'
 
 const Search = ({setPage}) => {
-    const {exit} = useInfoContext()
+    const {exit, onlineUsers} = useInfoContext()
     const [users, setUsers] = useState([]);
     const [datUser, setDatUser] = useState([]);
 
@@ -26,7 +26,7 @@ const Search = ({setPage}) => {
             }
         }
         getUsers()
-    },[])
+    },[onlineUsers])
 
     const searchUser = (e) => {
         e.preventDefault()
