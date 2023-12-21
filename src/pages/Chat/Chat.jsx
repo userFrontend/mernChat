@@ -51,7 +51,6 @@ const Chat = () => {
  
   useEffect(() => { 
     socket.on("answer-message", (data) => { 
-      console.log(data);
       setAnswerMessage(data); 
     }); 
   }, []);

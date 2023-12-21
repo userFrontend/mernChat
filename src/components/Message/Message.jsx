@@ -15,7 +15,7 @@ const serverURL = process.env.REACT_APP_SERVER_URL
 
 
 const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => {
-    const {onlineUsers, currentChat, setModal, modal, setUserModal, currentUser, exit, showModal, setShowModal, setPage} = useInfoContext()
+    const {onlineUsers, currentChat, setCurrentChat, setModal, modal, setUserModal, currentUser, exit, showModal, setShowModal, setPage} = useInfoContext()
     const [userData, setUserData] = useState(null)
     const [messages, setMessages] = useState([])
     const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +23,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
     const [dropdownId, setDropdownId] = useState();
     const [messageId, setMessageId] = useState();
     const [delChat, setDelChat] = useState(false)
+    const [send, setSend] = useState(false)
 
 
     const [textMessage, setTextMessage] = useState('')
@@ -104,6 +105,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
             const res = await deleteChat(currentChat._id);
             setLoading(!loading)
             setDelChat(false)
+            setCurrentChat(null)
             setPage(0)
         } catch (error) {
             if(error.response.data.message === 'jwt exprired'){
@@ -126,6 +128,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
 
 
       const handleSend = async () => {
+        setSend(true)
           const formData = new FormData()
 
         formData.append('senderId', currentUser._id); 
@@ -157,6 +160,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
             const {data} = await addMessage(formData);
             setMessages([...messages, data.messages])
             setTextMessage('')
+            setSend(false)
         } catch (error) {
             toast.dismiss()
             toast.error(error?.response?.data.message)
@@ -212,8 +216,8 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
                     <button onClick={() => {
                     imgRef.current.click()
                     }} className='message-btn'><i className="fa-solid fa-paperclip"></i></button>
-                    <InputEmoji value={textMessage} onChange={handleText}/>
-                    <button onClick={handleSend} className='message-btn'>Send</button>
+                    <InputEmoji keepOpened placeholder='Enter message...' onEnter={handleSend} value={textMessage} onChange={handleText}/>
+                    <button disabled={send} onClick={handleSend} className='message-btn'>Send</button>
                     <input ref={imgRef} type="file" name="image" className='message-file-input'/>
                 </div>
             </div>

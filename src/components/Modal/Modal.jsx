@@ -5,7 +5,6 @@ import {deleteUser, updateUser } from '../../api/userRequests'
 import { useInfoContext } from '../../context/Context'
 import Loader from '../Loader/Loader'
 import { toast } from 'react-toastify'
-import DeleteModal from './DelModal'
 const serverURL = process.env.REACT_APP_SERVER_URL
 
 
@@ -22,7 +21,6 @@ const Modal = ({toggleImg, setScreenImage}) => {
             toast.dismiss()
             toast.success(res?.data.message)
             localStorage.setItem("profile", JSON.stringify(res?.data.user))
-            localStorage.setItem("access_token", res?.data.token)
         } catch (error) {
             if(error.response.data.message === 'jwt exprired'){
                 exit()

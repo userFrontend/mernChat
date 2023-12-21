@@ -38,7 +38,7 @@ const Users = ({users, setPage}) => {
                             </div>
                             <div className="description">
                                 <h3>{user.firstname} {user.lastname}  <div style={online(user._id) ? {backgroundColor: 'greenyellow'} : {backgroundColor: 'gray'}} className='status'></div></h3>
-                                <button onClick={() =>{ createChat(user._id, currentUser._id); setPage(2)}}>send message</button>
+                                <button style={{border: 'none'}} onClick={() =>{ createChat(user._id, currentUser._id); setPage(2)}}>send message</button>
                             </div>
                         </li>
                     )
