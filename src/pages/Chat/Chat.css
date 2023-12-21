@@ -39,7 +39,7 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    gap: 10px;
+    gap: 30px;
 }
 
 .setting button {
@@ -53,6 +53,19 @@
     cursor: pointer;
 }
 
+@media (max-width: 350px) {
+    .navigation{display: block;}
+
+    .chat-page{
+        padding: 0;
+    }
+
+    .left-side, .middle-side, .right-side {
+        display: none; 
+        position: absolute; 
+        top: 0; left: 0;
+    }
+}
 @media (max-width: 600px) {
     .navigation{display: block;}
 
@@ -64,7 +77,7 @@
 
     .setting{justify-content: start;}
 }
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
     .chat-page{display: block;}
     
     .navigation{ display: block;}
@@ -78,7 +91,7 @@
     .setting{justify-content: start;}
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 1100px) {
     .middle-side {display: block !important;}
     .chat-page { grid-template-columns: repeat(3, 1fr); }
   }

@@ -6,3 +6,10 @@
     height: 96vh;
     overflow: auto;
 }
+
+.contact-users .team {
+    padding: 10px;
+}
+.contact-users .mimber h3{
+    width: 100%;
+}

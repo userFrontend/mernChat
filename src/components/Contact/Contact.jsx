@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 const serverURL = process.env.REACT_APP_SERVER_URL
 
 const Contact = ({chat}) => {
-    const {exit, currentUser, currentChat, onlineUsers} = useInfoContext()
+    const {exit, currentUser, onlineUsers} = useInfoContext()
     const [user, setUserData] = useState(null);
 
     const userId = chat?.members.find(id => id !== currentUser._id)
@@ -32,34 +32,18 @@ const Contact = ({chat}) => {
         getUsers()
     },[userId])
 
-    const deleteChatUser = async () => {
-        const confirim = window.confirm("tasdiqlash")
-        if(confirim){
-                try {
-                const res = await deleteChat(chat._id)
-                toast.dismiss()
-                toast.success(res?.data.message)
-            } catch (error) {
-                if(error.response.data.message === 'jwt exprired'){
-                    exit()
-                }
-            }
-        }
-    }
-
-
 
   return (
-            <li key={user?._id} className="member co-funder">
+            <>
                 <div className="thumb">
                     <img src={user?.profilePicture ? `${serverURL}/${user?.profilePicture}` : Profile} alt="profile_img" className="profile-img" />
                     </div>
                 <div className="description">
-                    <h3>{user?.firstname} {user?.lastname} <div style={online() ? {backgroundColor: 'greenyellow'} : {backgroundColor: 'gray'}} className='status'></div><i onClick={deleteChatUser}  className="fa-solid fa-ellipsis-vertical del"></i></h3>
+                    <h3>{user?.firstname} {user?.lastname} <div style={online() ? {backgroundColor: 'greenyellow'} : {backgroundColor: 'gray'}} className='status'></div></h3>
                     <div style={online() ? {color: 'greenyellow'} : {color: 'white'}}>{online() ? 'online' : 'offline'}</div>
                 </div>
                 
-            </li>
+            </>
   )
 }
 

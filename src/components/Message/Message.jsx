@@ -10,11 +10,12 @@ import InputEmoji  from 'react-input-emoji'
 import {format}  from 'timeago.js'
 import { toast } from 'react-toastify'
 import DeleteModal from '../Modal/DelModal'
+import { deleteChat } from '../../api/chatRequests'
 const serverURL = process.env.REACT_APP_SERVER_URL
 
 
 const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => {
-    const {onlineUsers, currentChat, setModal, modal, setUserModal, currentUser, exit, showModal, setShowModal} = useInfoContext()
+    const {onlineUsers, currentChat, setModal, modal, setUserModal, currentUser, exit, showModal, setShowModal, setPage} = useInfoContext()
     const [userData, setUserData] = useState(null)
     const [messages, setMessages] = useState([])
     const [isOpen, setIsOpen] = useState(false);
@@ -71,7 +72,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
         if(currentChat){
             fetchMessage()
         }
-    }, [currentChat, loading])
+    }, [currentChat, loading, asnwerMessage])
 
     useEffect(() => {
         if(currentChat && asnwerMessage !== null && asnwerMessage.chatId === currentChat._id){
@@ -88,10 +89,20 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
     const deleteOneMessage = async () => {
         try {
             const res = await deleteMessage(messageId);
-            toast.dismiss()
-            toast.success(res?.data.message)
             toggleDropdown()
             setLoading(!loading)
+        } catch (error) {
+            if(error.response.data.message === 'jwt exprired'){
+                exit()
+            }
+        }
+    }
+
+    const deleteUserChat = async (id) => {
+        try {
+            const res = await deleteChat(id);
+            setLoading(!loading)
+            setPage(0)
         } catch (error) {
             if(error.response.data.message === 'jwt exprired'){
                 exit()
@@ -113,29 +124,40 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
 
 
       const handleSend = async () => {
-          const les = new FormData()
+          const formData = new FormData()
 
-        les.append('senderId', currentUser._id); 
-        les.append('chatId', currentChat._id); 
-        les.append('text', textMessage); 
-        les.append('createdAt', new Date().getTime());
+        formData.append('senderId', currentUser._id); 
+        formData.append('chatId', currentChat._id); 
+        formData.append('text', textMessage); 
+        formData.append('createdAt', new Date().getTime());
 
-        if(imgRef.current.value !== null){
-            les.append('image', imgRef?.current.files[0])
-            imgRef.current.value = null
+        const newMessage = {
+            senderId: currentUser._id,
+            chatId: currentChat._id,
+            text: textMessage,
+            createdAt: new Date().getTime(),
+            file: imgRef?.current.files[0]
         }
-        
+
         if(textMessage === "" && !imgRef.current.value) {
             return
         }
+
+        if(imgRef.current.value !== null){
+            formData.append('image', imgRef?.current.files[0])
+            imgRef.current.value = null
+        }
         
-        setSendMessage({...les, receivedId: userId})
+        setSendMessage({...newMessage, receivedId: userId})
+        
 
         try {
-            const {data} = await addMessage(les);
+            const {data} = await addMessage(formData);
             setMessages([...messages, data.messages])
             setTextMessage('')
         } catch (error) {
+            toast.dismiss()
+            toast.error(error?.response?.data.message)
             if(error?.response?.data.message === 'jwt exprired'){
                 exit()
             }
@@ -149,7 +171,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
    
   return (
     <div className="message-box cssanimation blurIn">
-        {userData ? <div className="message-list" key={userData._id}>
+        {currentChat ? <div className="message-list" key={currentChat._id}>
             <div className="profile-box cssanimation blurInBottom">
                 <img onClick={() => {setModal(!modal); setUserModal(userData) }}  src={userData?.profilePicture ? `${serverURL}/${userData?.profilePicture}` : Profile} alt="profile_img" className="message-img" />
                 <div className='profile-content'>
@@ -157,7 +179,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
                     <div style={online() ? {color: 'greenyellow'} : {color: 'white'}}>{online() ? 'online' : 'offline'}</div>
                 </div>
                 <div className="profile-set">
-                    <UilServer />
+                <i onClick={() => {setShowModal(true)}} className="fa-solid fa-trash-can"></i>
                 </div>
             </div>
             <div style={currentUser.coverPicture && {backgroundImage: `url(${serverURL}/${currentUser?.coverPicture})`}} className="send-message cssanimation blurInTop">
@@ -174,17 +196,14 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
                         </button>
                         {isOpen && dropdownId === chat._id && (
                             <div className="dropdown-content">
-                            {chat.senderId === currentUser._id && <>
-                                <b onClick={() => {setShowModal(true); setMessageId(chat._id)}}><i className="fa-solid fa-trash-can"></i> Delete</b>
-                                <b><i className="fa-regular fa-pen-to-square"></i>Update</b>
-                            </>}
+                            <b onClick={() => {setShowModal(true); setMessageId(chat._id)}}><i className="fa-solid fa-trash-can"></i> Delete</b>
                             <b onClick={() => copyToClipboard(chat.text)}><i className="fa-regular fa-copy"></i> Copy</b>
                             <b onClick={() => setIsOpen(!isOpen)}><i className="fa-solid fa-xmark"></i> Close</b>
                             </div>
                         )}
                         </div>
                     </div>
-                </div>)}) : <h3 style={{position: "relative", top: '200px',}}>Hali yozishmalar mavjud emas!</h3>}
+                </div>)}) : <h3 style={{position: "relative", top: '200px',}}>No correspondence yet !</h3>}
             </div>
             <div className="send-input-box">
                 <div  className="sender-file-btn">
@@ -196,8 +215,8 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
                     <input ref={imgRef} type="file" name="image" className='message-file-input'/>
                 </div>
             </div>
-        </div> : <div className='wiat-result'><Loader/> <h1>Click to send message</h1> </div>}
-        {showModal && <DeleteModal onDelete={deleteOneMessage}/>}
+        </div> : <div className='wiat-result'><Loader/> <h1>Click profile to send message</h1> </div>}
+        {showModal && <DeleteModal onDelete={deleteOneMessage} chatDelete={deleteUserChat}/>}
     </div>
   )
 }

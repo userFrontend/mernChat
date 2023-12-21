@@ -6,8 +6,10 @@ import {UilSearch} from '@iconscout/react-unicons'
 import './Search.css'
 import Users from '../Users/Users'
 import Loader from '../Loader/Loader'
+import { useInfoContext } from '../../context/Context'
 
 const Search = ({setPage}) => {
+    const {exit} = useInfoContext()
     const [users, setUsers] = useState([]);
     const [datUser, setDatUser] = useState([]);
 
@@ -18,8 +20,9 @@ const Search = ({setPage}) => {
                 setUsers(res?.data.users);
                 setDatUser(res?.data.users)
             } catch (error) {
-                toast.dismiss()
-                toast.error(error?.response?.data.message)
+                if(error.response.data.message === 'jwt exprired'){
+                    exit()
+                }
             }
         }
         getUsers()

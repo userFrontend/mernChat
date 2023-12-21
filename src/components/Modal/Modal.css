@@ -106,6 +106,13 @@
     color: black;
 }
 
+.delete-btn{
+    position: absolute;
+    left: -100px;
+    transform: rotate(-90deg);
+    cursor: pointer;
+}
+
 @media (max-width: 600px) {
     .modal-content img{
         width: 200px;

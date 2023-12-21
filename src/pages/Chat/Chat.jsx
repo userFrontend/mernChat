@@ -28,40 +28,41 @@ const Chat = () => {
         const res = await userChats()
         setChats(res?.data.chats);
       } catch (error) {
-        toast.dismiss()
-        toast.error(error?.response?.data.message)
+        if(error.response.data.message === 'jwt exprired'){
+          exit()
+        }
       }
     }
     getchats()
   },[currentUser._id])
 
-  useEffect(()=>{
-    socket.emit('new-user-add', currentUser._id)
-    socket.on('get-users', (users) => {
-      setOnlineUsers(users)
-    })
-  },[currentUser._id])
-
-  useEffect(() => {
-    if(sendMessage !== null){
-      socket.emit('send-message', sendMessage)
-    }
-  }, [sendMessage])
-
-  useEffect(() => {
-    if(sendMessage !== null){
-      socket.on('aswer-message', (data) => {
-        setAnswerMessage(data)
-      })
-    }
-  }, [sendMessage])
+ useEffect(() => { 
+    socket.emit("new-user-added", currentUser._id); 
+ 
+    socket.on("get-users", (users) => { 
+      setOnlineUsers(users); 
+    }); 
+  }, [currentUser._id]); 
+ 
+  useEffect(() => { 
+    if (sendMessage !== null) { 
+      socket.emit("send-message", sendMessage); 
+    } 
+  }, [sendMessage]); 
+ 
+  useEffect(() => { 
+    socket.on("answer-message", (data) => { 
+      console.log(data);
+      setAnswerMessage(data); 
+    }); 
+  }, []);
   
   
   return (
     <div className='chat-page'>
       <div className="navigation">
-        <button onClick={() => setPage(1)}><i className="fa-solid fa-address-book"> </i> contact</button>
-        <button onClick={() => setPage(0)}><i className="fa-solid fa-comments"></i> Messages</button>
+        <button onClick={() => setPage(1)}><i className="fa-solid fa-address-book"> </i> Contact</button>
+        <button onClick={() => setPage(0)}><i className="fa-solid fa-comments"></i> Chats</button>
       </div>
       <div style={page === 1 ? {display: 'block'} : {}} className="left-side cssanimation blurInRight">
         <Search setPage={setPage}/>
@@ -81,11 +82,11 @@ const Chat = () => {
           </div>
           <ul className="team">
             {chats.length > 0 ? chats.map(chat => {
-              return (<div onClick={() => {setCurrentChat(chat); setPage(2)}} key={chat._id}>
+              return (<div  className="member co-funder" onClick={() => {setCurrentChat(chat); setPage(2)}} key={chat._id}>
                 <Contact chat={chat}/>
               </div>
                 )
-              }) : <><h2>Yozishmalar mavjudmas</h2> <br /> <Loader/></>}
+              }) : <> <Loader/> <br /> <h2>No records available !</h2></>}
           </ul>
         </div>
           </div>  

@@ -1,6 +1,8 @@
 .delete-modal {
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex-direction: column;
     gap: 20px;
 }
 
@@ -9,4 +11,11 @@
     border: none;
     padding: 5px;
     border-radius: 10px;
+}
+
+.del-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
 }

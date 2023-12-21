@@ -5,7 +5,8 @@
     border-radius: 10px;
     display: flex;
     align-items: start;
-    justify-content: center;
+    justify-content: space-between;
+    flex-direction: column;  
 }
 
 
@@ -43,14 +44,15 @@
 
 .send-input-box{
     width: 100%;
-    padding: 10px;
+    padding: 0 10px;
+    background: white;
 }
 
 
 
 
 .profile-content{
-    padding: 0 50px; 
+    text-align: center;
 }
 
 .profile-set{
@@ -140,7 +142,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: -15px;
 }
 
 .message-file-input{
@@ -194,6 +195,55 @@
 }
 
 
+@media (max-width: 350px) {
+
+    .dropdown-content {
+        left: -90px;
+    }
+
+    .own .dropdown-content {
+        position: sticky;
+    }
+
+    .send-input-box{
+        position: fixed;
+        bottom: -10px;
+        left: 0;
+    }
+
+	.send-message h3{
+		width: 100px;
+	}
+
+    .profile-content{
+        padding: 0 10px;
+        text-align: center;
+    }
+
+    .send-input-box {
+        position: fixed;
+        bottom: -10px;
+        left: 0;
+        background: white;
+    }
+   
+  }
+
+  .wiat-result {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  @media (max-width: 350px) {
+    .wiat-result h1{
+        font-size: 12px;
+        text-align: center;
+    }
+  }
+
 @media (max-width: 600px) {
 	.team {
 		width: 100%;
@@ -204,6 +254,12 @@
         filter: none;
     }
 
+    .send-input-box{
+        position: fixed;
+        bottom: -10px;
+        left: 0;
+    }
+
     .own .dropdown-content {
         left: -300px;
     }
@@ -211,6 +267,7 @@
 	.send-message h3{
 		width: 300px;
 	}
+
    
   }
 @media (min-width: 900px) {

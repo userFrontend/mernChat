@@ -33,9 +33,9 @@ const Auth = () => {
             localStorage.setItem("access_token", res?.data.token)
             setConfirmPass(false)
         } catch (error) {
-            setdisButton(false)
             toast.dismiss()
             toast.error(error?.response?.data.message)
+            setdisButton(false)
         }
     }
 

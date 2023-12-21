@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import "./Modal.css"
 import Profile from '../../img/defauld_img.jpg'
-import { getUser, updateUser } from '../../api/userRequests'
+import {deleteUser, updateUser } from '../../api/userRequests'
 import { useInfoContext } from '../../context/Context'
 import Loader from '../Loader/Loader'
 import { toast } from 'react-toastify'
+import DeleteModal from './DelModal'
 const serverURL = process.env.REACT_APP_SERVER_URL
 
 
@@ -16,7 +17,7 @@ const Modal = ({toggleImg, setScreenImage}) => {
         try {
             const data = new FormData(e.target);
             const res = await updateUser(userModal._id, data)
-            console.log(res);
+            setModal(false)
             setUserModal(res?.data.user)
             toast.dismiss()
             toast.success(res?.data.message)
@@ -28,15 +29,28 @@ const Modal = ({toggleImg, setScreenImage}) => {
             }
         }
     }
+    const deleteAccout = async () => {
+
+        try {
+            const res = await deleteUser(currentUser._id)
+            setModal(false)
+            exit()
+        } catch (error) {
+            if(error.response.data.message === 'jwt exprired'){
+                exit()
+            }
+        }
+    }
 
   return (
     <div>
         <div className="modal" id="myModal">
-        {userModal ?  <div className="modal-content" style={currentUser.coverPicture && {backgroundImage: `url(${serverURL}/${currentUser?.coverPicture})`}}>
+        {userModal ?  <div className="modal-content" style={currentUser.coverPicture && userModal?._id === currentUser._id ? {backgroundImage: `url(${serverURL}/${currentUser?.coverPicture})`} : {}}>
             <div className="img-modal">
                 <img onClick={() => {toggleImg(); setScreenImage(userModal?.profilePicture)}} width={200} src={userModal?.profilePicture ? `${serverURL}/${userModal?.profilePicture}` : Profile} alt="profile_img" className="profile-img" />
             </div>
             <div className="open-profile">
+                <button onClick={deleteAccout} className='delete-btn' style={{color: 'red'}} ><i style={{color: 'red'}} className="fa-solid fa-trash-can"></i> Delete account</button>
                 <form action="#" onSubmit={updateUserData}>
                     <div className="input-profile">
                         <i className="fa-solid fa-signature"></i>
@@ -86,9 +100,11 @@ const Modal = ({toggleImg, setScreenImage}) => {
                 </form>
             </div>
             <span className="close" onClick={() => setModal(!modal)}>&times;</span>
-        </div> : <Loader/>}
+        </div> : <div onClick={() => setModal(!modal)}><Loader /></div>}
         </div>
-
+        <div style={{zIndex: 10001}}>
+        <DeleteModal/>
+        </div>
     </div>
   )
 }
