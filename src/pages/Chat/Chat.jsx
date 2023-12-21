@@ -34,7 +34,7 @@ const Chat = () => {
       }
     }
     getchats()
-  },[currentUser._id])
+  },[currentUser._id, page])
 
  useEffect(() => { 
     socket.emit("new-user-added", currentUser._id); 

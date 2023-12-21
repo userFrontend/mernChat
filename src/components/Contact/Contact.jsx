@@ -3,8 +3,6 @@ import { getUser } from '../../api/userRequests'
 import './Contact.css'
 import { useInfoContext } from '../../context/Context'
 import Profile from '../../img/defauld_img.jpg'
-import { deleteChat } from '../../api/chatRequests'
-import { toast } from 'react-toastify'
 const serverURL = process.env.REACT_APP_SERVER_URL
 
 const Contact = ({chat}) => {
