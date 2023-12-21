@@ -2,17 +2,16 @@ import React, { useState } from 'react';
 import './DelModal.css'
 import { useInfoContext } from '../../context/Context';
 
-const DeleteModal = ({ onDelete, chatDelete }) => {
+const DeleteModal = ({ onDelete, chatDelete, delChat }) => {
     const {setShowModal, showModal} = useInfoContext()
 
   const handleDelete = () => {
-    if(onDelete){
-      onDelete();
-    };
-    if(chatDelete){
-      chatDelete();
-    };
     setShowModal(false);
+    if(delChat){
+      chatDelete();
+    } else {
+      onDelete();
+    }
   };
 
   return (

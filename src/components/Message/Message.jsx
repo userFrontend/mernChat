@@ -22,6 +22,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
     const [loading, setLoading] = useState(false);
     const [dropdownId, setDropdownId] = useState();
     const [messageId, setMessageId] = useState();
+    const [delChat, setDelChat] = useState(false)
 
 
     const [textMessage, setTextMessage] = useState('')
@@ -102,6 +103,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
         try {
             const res = await deleteChat(currentChat._id);
             setLoading(!loading)
+            setDelChat(false)
             setPage(0)
         } catch (error) {
             if(error.response.data.message === 'jwt exprired'){
@@ -179,7 +181,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
                     <div style={online() ? {color: 'greenyellow'} : {color: 'white'}}>{online() ? 'online' : 'offline'}</div>
                 </div>
                 <div className="profile-set">
-                <i onClick={() => {setShowModal(true)}} className="fa-solid fa-trash-can"></i>
+                <i onClick={() => {setShowModal(true); setDelChat(true)}} className="fa-solid fa-trash-can"></i>
                 </div>
             </div>
             <div style={currentUser.coverPicture && {backgroundImage: `url(${serverURL}/${currentUser?.coverPicture})`}} className="send-message cssanimation blurInTop">
@@ -216,7 +218,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
                 </div>
             </div>
         </div> : <div className='wiat-result'><Loader/> <h1 style={{textAlign: "center"}}>Click profile to send message</h1> </div>}
-        {showModal && <DeleteModal onDelete={deleteOneMessage} chatDelete={deleteUserChat}/>}
+        {showModal && <DeleteModal onDelete={deleteOneMessage} chatDelete={deleteUserChat} delChat={delChat}/>}
     </div>
   )
 }

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './Chat.css'
 import { useInfoContext } from '../../context/Context'
-import { toast } from 'react-toastify'
 import { userChats } from '../../api/chatRequests'
 import Search from '../../components/Search/Search'
 import Contact from '../../components/Contact/Contact'
@@ -13,7 +12,7 @@ const serverURL = process.env.REACT_APP_SERVER_URL
 
 const Chat = () => {
   const {chats, exit, setChats, currentUser, setUserModal, modal, setModal, setCurrentChat, setOnlineUsers, page, setPage} = useInfoContext()
-  const socket = io("http://localhost:4001")
+  const socket = io(serverURL)
 
   const [sendMessage, setSendMessage] = useState(null)
   const [asnwerMessage, setAnswerMessage] = useState(null)

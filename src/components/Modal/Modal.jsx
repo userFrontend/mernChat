@@ -50,7 +50,7 @@ const Modal = ({toggleImg, setScreenImage}) => {
                 <img onClick={() => {toggleImg(); setScreenImage(userModal?.profilePicture)}} width={200} src={userModal?.profilePicture ? `${serverURL}/${userModal?.profilePicture}` : Profile} alt="profile_img" className="profile-img" />
             </div>
             <div className="open-profile">
-                <button onClick={deleteAccout} className='delete-btn' style={{color: 'red'}} ><i style={{color: 'red'}} className="fa-solid fa-trash-can"></i> Delete account</button>
+                {userModal?._id === currentUser._id && <button onClick={deleteAccout} className='delete-btn' style={{color: 'red'}} ><i style={{color: 'red'}} className="fa-solid fa-trash-can"></i> Delete account</button>}
                 <form action="#" onSubmit={updateUserData}>
                     <div className="input-profile">
                         <i className="fa-solid fa-signature"></i>
@@ -101,9 +101,6 @@ const Modal = ({toggleImg, setScreenImage}) => {
             </div>
             <span className="close" onClick={() => setModal(!modal)}>&times;</span>
         </div> : <div onClick={() => setModal(!modal)}><Loader /></div>}
-        </div>
-        <div style={{zIndex: 10001}}>
-        <DeleteModal/>
         </div>
     </div>
   )
