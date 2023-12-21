@@ -215,7 +215,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
                     <input ref={imgRef} type="file" name="image" className='message-file-input'/>
                 </div>
             </div>
-        </div> : <div className='wiat-result'><Loader/> <h1>Click profile to send message</h1> </div>}
+        </div> : <div className='wiat-result'><Loader/> <h1 style={{textAlign: "center"}}>Click profile to send message</h1> </div>}
         {showModal && <DeleteModal onDelete={deleteOneMessage} chatDelete={deleteUserChat}/>}
     </div>
   )
