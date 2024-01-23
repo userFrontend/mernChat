@@ -3,7 +3,6 @@ import { getUser } from '../../api/userRequests'
 import './Contact.css'
 import { useInfoContext } from '../../context/Context'
 import Profile from '../../img/defauld_img.jpg'
-const serverURL = process.env.REACT_APP_SERVER_URL
 
 const Contact = ({chat}) => {
     const {exit, currentUser, onlineUsers} = useInfoContext()
@@ -22,7 +21,7 @@ const Contact = ({chat}) => {
                 const res = await getUser(userId)
                 setUserData(res.data.user);
             } catch (error) {
-                if(error.response.data.message === 'jwt exprired'){
+                if(error.response.data.message === 'jwt expired'){
                     exit()
                 }
             }
@@ -34,7 +33,7 @@ const Contact = ({chat}) => {
   return (
             <>
                 <div className="thumb">
-                    <img src={user?.profilePicture ? `${serverURL}/${user?.profilePicture}` : Profile} alt="profile_img" className="profile-img" />
+                    <img src={user?.profilePicture?.url ? `${user?.profilePicture?.url}` : Profile} alt="profile_img" className="profile-img" />
                     </div>
                 <div className="description">
                     <h3>{user?.firstname} {user?.lastname} <div style={online() ? {backgroundColor: 'greenyellow'} : {backgroundColor: 'gray'}} className='status'></div></h3>

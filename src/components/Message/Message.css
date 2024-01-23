@@ -67,7 +67,11 @@
     border-radius: 8px;
     color: white;
     border: none;
-    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 35px;
 }
 .message-img{
     height: 60px;
@@ -92,7 +96,7 @@
 }
 
 .send-message h3{
-    width: 400px;
+    width: 370px;
     padding: 20px 30px;
     
 }
@@ -107,6 +111,34 @@
     background-color: gainsboro;
     padding: 5px 15px;
     text-align: center;
+}
+
+.file-image {
+    position: absolute;
+    bottom: 60px;
+    height: 200px;
+    width: 200px;
+}
+
+.file-image img {
+    z-index: 3;
+    height: 200px;
+    width: 200px;
+    object-fit: cover;
+    border: 3px solid white;
+}
+
+.file-image button {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    height: 20px;
+    width: 20px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    background: var(--buttonBg);
 }
 
 .own {

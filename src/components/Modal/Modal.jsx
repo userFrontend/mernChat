@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import "./Modal.css"
 import Profile from '../../img/defauld_img.jpg'
 import {deleteUser, updateUser } from '../../api/userRequests'
@@ -9,7 +9,7 @@ const serverURL = process.env.REACT_APP_SERVER_URL
 
 
 const Modal = ({toggleImg, setScreenImage}) => {
-    const {exit, currentUser, setModal, userModal, setUserModal, modal} = useInfoContext()
+    const {exit, currentUser, setModal, userModal, setCurrentUser, modal} = useInfoContext()
 
     const updateUserData = async (e) => {
         e.preventDefault()
@@ -17,35 +17,37 @@ const Modal = ({toggleImg, setScreenImage}) => {
             const data = new FormData(e.target);
             const res = await updateUser(userModal._id, data)
             setModal(false)
-            setUserModal(res?.data.user)
             toast.dismiss()
+            setCurrentUser(res?.data.user);
             toast.success(res?.data.message)
             localStorage.setItem("profile", JSON.stringify(res?.data.user))
-        } catch (error) {
-            if(error.response.data.message === 'jwt exprired'){
+        } catch (err) {
+            toast.dismiss()
+            toast.error(err.response.data.message)
+            if(err.response.data.message === 'jwt expired'){
                 exit()
             }
         }
     }
     const deleteAccout = async () => {
-
         try {
-            const res = await deleteUser(currentUser._id)
+            await deleteUser(currentUser._id)
             setModal(false)
             exit()
-        } catch (error) {
-            if(error.response.data.message === 'jwt exprired'){
+        } catch (err) {
+            toast.dismiss()
+            toast.error(err?.response?.data?.message)
+            if(err.response.data.message === 'jwt expired'){
                 exit()
             }
         }
     }
-
   return (
     <div>
         <div className="modal" id="myModal">
-        {userModal ?  <div className="modal-content" style={currentUser.coverPicture && userModal?._id === currentUser._id ? {backgroundImage: `url(${serverURL}/${currentUser?.coverPicture})`} : {}}>
+        {userModal ?  <div className="modal-content" style={currentUser.coverPicture?.url && userModal?._id === currentUser._id ? {backgroundImage: `url(${currentUser?.coverPicture?.url})`} : {}}>
             <div className="img-modal">
-                <img onClick={() => {toggleImg(); setScreenImage(userModal?.profilePicture)}} width={200} src={userModal?.profilePicture ? `${serverURL}/${userModal?.profilePicture}` : Profile} alt="profile_img" className="profile-img" />
+                <img onClick={() => {toggleImg(); setScreenImage(userModal?.profilePicture?.url)}} width={200} src={userModal?.profilePicture?.url ? `${userModal?.profilePicture?.url}` : Profile} alt="profile_img" className="profile-img" />
             </div>
             <div className="open-profile">
                 {userModal?._id === currentUser._id && <button onClick={deleteAccout} className='delete-btn' style={{color: 'red'}} ><i style={{color: 'red'}} className="fa-solid fa-trash-can"></i> Delete account</button>}

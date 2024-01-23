@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import './Users.css'
 import { useInfoContext } from '../../context/Context'
 import Profile from '../../img/defauld_img.jpg'
@@ -21,7 +21,7 @@ const Users = ({users, setPage}) => {
                 setChats([...chats, data?.chat])
             }
         } catch (error) {
-            if(error.response.data.message === 'jwt exprired'){
+            if(error.response.data.message === 'jwt expired'){
                 exit()
             }
         }
@@ -34,11 +34,11 @@ const Users = ({users, setPage}) => {
                     return (
                         <li key={user._id} className="member co-funder">
                             <div className="thumb">
-                                <img onClick={() => {setUserModal(user); setModal(!modal)}} src={user?.profilePicture ? `${serverURL}/${user?.profilePicture}` : Profile} alt="profile_img" className="profile-img" />
+                                <img onClick={() => {setUserModal(user); setModal(!modal)}} src={user?.profilePicture?.url  ? `${user?.profilePicture?.url }` : Profile} alt="profile_img" className="profile-img" />
                             </div>
-                            <div className="description">
+                            <div className="description" onClick={() =>{ createChat(user._id, currentUser._id); setPage(2)}}>
                                 <h3>{user.firstname} {user.lastname}  <div style={online(user._id) ? {backgroundColor: 'greenyellow'} : {backgroundColor: 'gray'}} className='status'></div></h3>
-                                <button style={{border: 'none'}} onClick={() =>{ createChat(user._id, currentUser._id); setPage(2)}}>send message</button>
+                                <div style={online() ? {color: 'greenyellow'} : {color: 'white'}}>{online() ? 'online' : 'offline'}</div>
                             </div>
                         </li>
                     )

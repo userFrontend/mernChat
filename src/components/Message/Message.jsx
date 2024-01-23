@@ -179,7 +179,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
     <div className="message-box cssanimation blurIn">
         {currentChat ? <div className="message-list" key={currentChat._id}>
             <div className="profile-box cssanimation blurInBottom">
-                <img onClick={() => {setModal(!modal); setUserModal(userData) }}  src={userData?.profilePicture ? `${serverURL}/${userData?.profilePicture}` : Profile} alt="profile_img" className="message-img" />
+                <img onClick={() => {setModal(!modal); setUserModal(userData) }}  src={userData?.profilePicture?.url ? `${userData?.profilePicture?.url}` : Profile} alt="profile_img" className="message-img" />
                 <div className='profile-content'>
                     <b>{userData?.firstname} {userData?.lastname}</b>
                     <div style={online() ? {color: 'greenyellow'} : {color: 'white'}}>{online() ? 'online' : 'offline'}</div>
@@ -188,12 +188,12 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
                 <i onClick={() => {setShowModal(true); setDelChat(true)}} className="fa-solid fa-trash-can"></i>
                 </div>
             </div>
-            <div style={currentUser.coverPicture && {backgroundImage: `url(${serverURL}/${currentUser?.coverPicture})`}} className="send-message cssanimation blurInTop">
+            <div style={currentUser.coverPicture?.url && {backgroundImage: `url(${currentUser?.coverPicture?.url})`}} className="send-message cssanimation blurInTop">
             {messages?.length > 0 ? messages.map(chat => {
                 return(<div ref={scroll} key={chat._id} className={chat.senderId === currentUser._id ? "messages own" : "messages"}>
                     <div className='span-box'>
                         <b>
-                        {chat.file && <img onClick={() => {toggleImg(); setScreenImage(chat?.file)}} style={{width: '100%'}} src={`${serverURL}/${chat?.file}`} alt='chat_img'/>}    
+                        {chat.file && <img onClick={() => {toggleImg(); setScreenImage(chat?.file)}} style={{width: '100%'}} src={`${chat?.file}`} alt='chat_img'/>}    
                         {chat.text} </b>
                         <span className='message-time'>{format(chat.createdAt)}</span>
                         <div className="dropdown">

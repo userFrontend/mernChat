@@ -15,9 +15,9 @@ export const getMessage = (chatId) => {
     return API.get(`/api/message/${chatId}`, {headers: {token}})
 };
 
-export const updateMessage = (messageId) => {
+export const updateMessage = (messageId, data) => {
     const token = localStorage.getItem('access_token')
-    return API.put(`/api/message/${messageId}`, {headers: {token}})
+    return API.put(`/api/message/${messageId}`, data, {headers: {token}})
 };
 
 export const deleteMessage = (messageId) => {

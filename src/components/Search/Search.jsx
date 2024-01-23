@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Logo from '../../img/logo.png'
 import { getAllUsers } from '../../api/userRequests'
-import { toast } from 'react-toastify'
 import {UilSearch} from '@iconscout/react-unicons'
 import './Search.css'
 import Users from '../Users/Users'
@@ -20,13 +19,13 @@ const Search = ({setPage}) => {
                 setUsers(res?.data.users);
                 setDatUser(res?.data.users)
             } catch (error) {
-                if(error.response.data.message === 'jwt exprired'){
+                if(error?.response?.data.message === 'jwt expired'){
                     exit()
                 }
             }
         }
         getUsers()
-    },[onlineUsers, currentUser])
+    },[onlineUsers, currentUser, exit])
 
     const searchUser = (e) => {
         e.preventDefault()
