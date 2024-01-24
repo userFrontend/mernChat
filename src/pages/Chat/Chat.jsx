@@ -21,17 +21,9 @@ const Chat = () => {
   const [deleted, setDeleted] = useState(false);
   const [socketDel, setSocketDel] = useState(false);
   const [screenImage, setScreenImage] = useState(null);
-  const [readingChat, setReadingChat] = useState([]);
+  const [readingChat, setReadingChat] = useState(null);
   
   const toggleImg = () => setFullScreen(!fullScreen);
-
-  useEffect(()=>{
-    try {
-      
-    } catch (error) {
-      console.log(error);
-    }
-  },[readingChat])
 
   useEffect(()=>{
     const getchats = async () => {
@@ -45,7 +37,7 @@ const Chat = () => {
       }
     }
     getchats()
-  },[currentUser._id, page, exit, setChats])
+  },[currentUser._id, page])
 
   useEffect(()=> {
     toast.dismiss()
@@ -76,16 +68,16 @@ const Chat = () => {
     socket.on("is-checked", (id) => { 
       setReadingChat(id)
     }); 
-  }, [currentChat]);
+  }, [currentChat, sendMessage, asnwerMessage]);
 
-  useEffect(() => { 
-    if(socketDel){
+  useEffect(() => {
+    if(deleted && socketDel){
       setSocketDel(false)
       socket.emit('delete-message')
+      socket.on('deleted', () => {
+        setDeleted(!deleted)
+      })
     }
-    socket.on('deleted', () => {
-      setDeleted(!deleted)
-    })
   }, [deleted]);
   
   
@@ -99,7 +91,7 @@ const Chat = () => {
         <Search setPage={setPage}/>
       </div>
       <div  style={page === 2 ? {display: 'block'} : {}} className="middle-side">
-        <Message asnwerMessage={asnwerMessage} setSendMessage={setSendMessage} setScreenImage={setScreenImage} toggleImg={toggleImg} readingChat={readingChat} setSocketDel={setSocketDel} deleted={deleted} setDeleted={setDeleted}/>
+        <Message asnwerMessage={asnwerMessage} setSendMessage={setSendMessage} sendMessage={sendMessage} setScreenImage={setScreenImage} toggleImg={toggleImg} readingChat={readingChat} setSocketDel={setSocketDel} deleted={deleted} setDeleted={setDeleted}/>
       </div>
       <div style={page === 0 ? {display: 'block'} : {}} className="right-side cssanimation blurInLeft">
         <div className="contact-users">

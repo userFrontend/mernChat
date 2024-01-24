@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import './Message.css'
 import { useInfoContext } from '../../context/Context'
 import Loader from '../Loader/Loader'
-import { addMessage, deleteMessage, getMessage } from '../../api/messageRequests'
-import {UilServer} from '@iconscout/react-unicons'
+import { addMessage, deleteMessage, getMessage, updateMessage } from '../../api/messageRequests'
 import Profile from '../../img/defauld_img.jpg'
 import { getUser } from '../../api/userRequests'
 import InputEmoji  from 'react-input-emoji'
@@ -11,10 +10,11 @@ import {format}  from 'timeago.js'
 import { toast } from 'react-toastify'
 import DeleteModal from '../Modal/DelModal'
 import { deleteChat } from '../../api/chatRequests'
-const serverURL = process.env.REACT_APP_SERVER_URL
+import audioSend from '../../audio/sending.mp3'
+import audioGet from '../../audio/getting.mp3'
 
 
-const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => {
+const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg, readingChat, setSocketDel, deleted, setDeleted, sendMessage}) => {
     const {onlineUsers, currentChat, setCurrentChat, setModal, modal, setUserModal, currentUser, exit, showModal, setShowModal, setPage} = useInfoContext()
     const [userData, setUserData] = useState(null)
     const [messages, setMessages] = useState([])
@@ -75,9 +75,10 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
             fetchMessage()
         }
     }, [currentChat, loading, asnwerMessage])
-
+    
     useEffect(() => {
         if(currentChat && asnwerMessage !== null && asnwerMessage.chatId === currentChat._id){
+            getAudio.current.play()
             setMessages([...messages, asnwerMessage])
         }
     }, [asnwerMessage])
@@ -91,8 +92,10 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
     const deleteOneMessage = async () => {
         try {
             const res = await deleteMessage(messageId);
+            setSocketDel(true)
             toggleDropdown()
             setLoading(!loading)
+            setDeleted(!deleted)
         } catch (error) {
             if(error.response.data.message === 'jwt exprired'){
                 exit()
@@ -101,18 +104,46 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
     }
 
     const deleteUserChat = async () => {
+        setSocketDel(true)
         try {
             const res = await deleteChat(currentChat._id);
             setLoading(!loading)
             setDelChat(false)
             setCurrentChat(null)
             setPage(0)
-        } catch (error) {
-            if(error.response.data.message === 'jwt exprired'){
+        } catch (err) {
+            toast.dismiss()
+            toast.error(err.response.data.message)
+            if(err.response.data.message === 'jwt exprired'){
                 exit()
             }
         }
     }
+
+    useEffect(()=>{
+        const readingMessage = async () => {
+            if(currentChat && readingChat === currentChat._id){
+                const data = new FormData()
+                data.append('isRead', true)
+                messages.map(async message => {
+                    try {
+                        if(message.senderId !== currentUser._id){
+                            const res = await updateMessage(message._id, data)
+                            setLoading(!loading)
+                        }
+                    } catch (error) {
+                        if(error.response.data.message === 'jwt exprired'){
+                            exit()
+                        }
+                    }
+                })
+            }
+        }
+        readingMessage()
+    },[asnwerMessage, sendMessage])
+
+    const getAudio = useRef()
+    const sendAudio = useRef()
 
     const copyToClipboard = (text) => {
         const textToCopy = text;
@@ -128,7 +159,6 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
 
 
       const handleSend = async () => {
-        setSend(true)
           const formData = new FormData()
 
         formData.append('senderId', currentUser._id); 
@@ -144,9 +174,11 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
             file: imgRef?.current.files[0]
         }
 
-        if(textMessage === "" && !imgRef.current.value) {
+        if(textMessage === "" && !imgRef.current.value || textMessage === " " && !imgRef.current.value) {
             return
         }
+
+        setSend(true)
 
         if(imgRef.current.value !== null){
             formData.append('image', imgRef?.current.files[0])
@@ -161,6 +193,8 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
             setMessages([...messages, data.messages])
             setTextMessage('')
             setSend(false)
+            setPreviewImage('')
+            sendAudio.current.play()
         } catch (error) {
             toast.dismiss()
             toast.error(error?.response?.data.message)
@@ -171,10 +205,21 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
       }
 
       const handleText = (e) => {
-        setTextMessage(e)
+        console.log(e);
+        if(e === ""){
+            setSend(false)
+        }
+        setTextMessage(e)   
       }
 
-   
+      const [previewImage, setPreviewImage] = useState('');
+
+      const handleImg = (e) => {
+            const image = e.target.files[0];
+            setPreviewImage(URL.createObjectURL(image));
+      }
+
+   console.log(send);
   return (
     <div className="message-box cssanimation blurIn">
         {currentChat ? <div className="message-list" key={currentChat._id}>
@@ -195,7 +240,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
                         <b>
                         {chat.file && <img onClick={() => {toggleImg(); setScreenImage(chat?.file)}} style={{width: '100%'}} src={`${chat?.file}`} alt='chat_img'/>}    
                         {chat.text} </b>
-                        <span className='message-time'>{format(chat.createdAt)}</span>
+                        <span className='message-time'>{format(chat.createdAt)} {!chat.isRead? <>{chat.senderId === currentUser._id && <i className="fa-regular fa-circle-check"></i>}</> : <>{chat.senderId === currentUser._id && <i className="fa-solid fa-circle-check"></i>}</>}</span>
                         <div className="dropdown">
                         <button className="dropbtn" onClick={() => {toggleDropdown( ); setDropdownId(chat._id)}}>
                             <i className="fa-solid fa-ellipsis-vertical del"></i>
@@ -212,17 +257,20 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg}) => 
                 </div>)}) : <h3 style={{position: "relative", top: '200px',}}>No correspondence yet !</h3>}
             </div>
             <div className="send-input-box">
+                {previewImage && <div className='file-image'><img className='' src={previewImage} alt="Selected" /><button onClick={() => setPreviewImage('')}>X</button></div>}
                 <div  className="sender-file-btn">
                     <button onClick={() => {
                     imgRef.current.click()
                     }} className='message-btn'><i className="fa-solid fa-paperclip"></i></button>
-                    <InputEmoji keepOpened placeholder='Enter message...' onEnter={handleSend} value={textMessage} onChange={handleText}/>
+                    <InputEmoji keepOpened placeholder='Enter message...' onEnter={() =>{if(!send)handleSend()}} value={textMessage} onChange={handleText}/>
                     <button disabled={send} onClick={handleSend} className='message-btn'>Send</button>
-                    <input ref={imgRef} type="file" name="image" className='message-file-input'/>
+                    <input onChange={handleImg} ref={imgRef} type="file" name="image" className='message-file-input'/>
                 </div>
             </div>
         </div> : <div className='wiat-result'><Loader/> <h1 style={{textAlign: "center"}}>Click profile to send message</h1> </div>}
         {showModal && <DeleteModal onDelete={deleteOneMessage} chatDelete={deleteUserChat} delChat={delChat}/>}
+        <audio ref={sendAudio} src={audioSend}></audio>
+        <audio ref={getAudio} src={audioGet}></audio>
     </div>
   )
 }
