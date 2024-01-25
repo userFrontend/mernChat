@@ -74,10 +74,10 @@ const Chat = () => {
     if(deleted && socketDel){
       setSocketDel(false)
       socket.emit('delete-message')
-      socket.on('deleted', () => {
-        setDeleted(!deleted)
-      })
     }
+    socket.on('deleted', () => {
+      setDeleted(!deleted)
+    })
   }, [deleted]);
   
   
@@ -114,7 +114,7 @@ const Chat = () => {
         </div>
           </div>  
       </div>
-      {fullScreen && <img className="full-screen" src={`${serverURL}/${screenImage}`} onClick={toggleImg} alt='image'/>}
+      {fullScreen && <img className="full-screen" src={`${screenImage}`} onClick={toggleImg} alt='image'/>}
       {modal && <Modal setScreenImage={setScreenImage} toggleImg={toggleImg}/>}
       </div>
   )

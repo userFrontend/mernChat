@@ -74,7 +74,8 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg, read
         if(currentChat){
             fetchMessage()
         }
-    }, [currentChat, loading, asnwerMessage])
+        console.log("o'zgartirdim");
+    }, [currentChat, loading, asnwerMessage, deleted])
     
     useEffect(() => {
         if(currentChat && asnwerMessage !== null && asnwerMessage.chatId === currentChat._id){
@@ -92,6 +93,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg, read
     const deleteOneMessage = async () => {
         try {
             const res = await deleteMessage(messageId);
+            console.log(res);
             setSocketDel(true)
             toggleDropdown()
             setLoading(!loading)
@@ -124,12 +126,16 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg, read
         const readingMessage = async () => {
             if(currentChat && readingChat === currentChat._id){
                 const data = new FormData()
-                data.append('isRead', true)
                 messages.map(async message => {
                     try {
-                        if(message.senderId !== currentUser._id){
+                        if(message.senderId !== currentUser._id && !message.isRead){
+                            data.append('isRead', true)
                             const res = await updateMessage(message._id, data)
-                            setLoading(!loading)
+                            if(res.data){
+                                setLoading(!loading)
+                                console.log("o'qidim");
+
+                            }
                         }
                     } catch (error) {
                         if(error.response.data.message === 'jwt exprired'){
@@ -205,7 +211,6 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg, read
       }
 
       const handleText = (e) => {
-        console.log(e);
         if(e === ""){
             setSend(false)
         }
@@ -218,8 +223,6 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg, read
             const image = e.target.files[0];
             setPreviewImage(URL.createObjectURL(image));
       }
-
-   console.log(send);
   return (
     <div className="message-box cssanimation blurIn">
         {currentChat ? <div className="message-list" key={currentChat._id}>
@@ -238,7 +241,7 @@ const Message = ({asnwerMessage, setSendMessage, setScreenImage, toggleImg, read
                 return(<div ref={scroll} key={chat._id} className={chat.senderId === currentUser._id ? "messages own" : "messages"}>
                     <div className='span-box'>
                         <b>
-                        {chat.file && <img onClick={() => {toggleImg(); setScreenImage(chat?.file)}} style={{width: '100%'}} src={`${chat?.file}`} alt='chat_img'/>}    
+                        {chat.file && <img onClick={() => {toggleImg(); setScreenImage(chat?.file?.url)}} style={{width: '100%'}} src={`${chat?.file?.url}`} alt='chat_img'/>}    
                         {chat.text} </b>
                         <span className='message-time'>{format(chat.createdAt)} {!chat.isRead? <>{chat.senderId === currentUser._id && <i className="fa-regular fa-circle-check"></i>}</> : <>{chat.senderId === currentUser._id && <i className="fa-solid fa-circle-check"></i>}</>}</span>
                         <div className="dropdown">
